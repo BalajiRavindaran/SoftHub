@@ -1,14 +1,12 @@
-// src/pages/Login.js
 import React from 'react';
-import { withAuthenticator } from '@aws-amplify/ui-react';
 
-const Login = ({ signOut, user }) => {
+const Login = () => {
   return (
     <div>
-      <h1>Welcome, {user.username}</h1>
-      <button onClick={signOut}>Sign out</button>
+      <h1>Login</h1>
+      <p>Access your account to manage your software and purchases.</p>
     </div>
   );
 };
 
-export default withAuthenticator(Login);
+export default Login;
