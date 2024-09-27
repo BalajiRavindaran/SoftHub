@@ -6,6 +6,7 @@ const Products = () => {
   const { categorySlug } = useParams(); // Get categorySlug from URL parameters
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // For navigation purposes
+  
 
   // Sample product data
   const products = [
@@ -26,17 +27,19 @@ const Products = () => {
 
   // Filter products by categorySlug and search term
   const filteredProducts = products.filter(
-    product => product.category.toLowerCase() === categorySlug.toLowerCase() &&
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product =>
+      product.category.toLowerCase() === categorySlug.toLowerCase() &&
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleProductClick = (productId) => {
+    // Navigate to a dynamic product details page
+    navigate(`/products/${categorySlug}/${productId}`);
+  };
 
   return (
     <div className="products-container">
-      <h1>{categorySlug.replace('-', ' ').toUpperCase()}</h1>
-      {/* Display category description */}
-      <p className="category-description-pg">{categories[categorySlug]}</p>
-
-      {/* Search Bar */}
+      <h1>{categorySlug.replace('-', ' ').toLocaleUpperCase()}</h1>
       <div className="search-bar">
         <input 
           type="text" 
@@ -49,7 +52,7 @@ const Products = () => {
       <div className="product-grid">
         {filteredProducts.length > 0 ? (
           filteredProducts.map(product => (
-            <div key={product.id} className="product-card">
+            <div key={product.id} className="product-card" onClick={() => handleProductClick(product.id)}>
               <img src={product.imgUrl} alt={product.name} className="product-image" />
               <h2 className="product-name">{product.name}</h2>
               <p className="product-price">{product.price}</p>
@@ -58,11 +61,7 @@ const Products = () => {
             </div>
           ))
         ) : (
-          <div className="no-products">
-            <p>No products found for this category or search term.</p>
-            {/* Button to go back to home */}
-            <button onClick={() => navigate('/')}>Back to Categories</button>
-          </div>
+          <p>No products found for this category.</p>
         )}
       </div>
     </div>
