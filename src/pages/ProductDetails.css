@@ -1,0 +1,173 @@
+body {
+    background-color: #121212;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .product-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px;
+  }
+  
+  /* Header Section */
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .game-image {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .game-info {
+    max-width: 800px;
+  }
+  
+  .game-title {
+    font-size: 32px;
+    color: #00aaff;
+  }
+  
+  .developer-info {
+    font-size: 18px;
+    color: #b0c4de;
+  }
+  
+  .tags {
+    margin: 10px 0;
+  }
+  
+  .tag {
+    background-color: #007bff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    color: white;
+  }
+  
+  .buy-button-container {
+    margin-top: 10px;
+  }
+  
+  .buy-button {
+    background-color: #00ff88;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  /* Gallery Section */
+  .gallery-section {
+    margin-bottom: 20px;
+  }
+  
+  .gallery img {
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* Description Section */
+  .description-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #1e1e1e;
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    max-width: 60%;
+  }
+  
+  .product-details {
+    max-width: 30%;
+  }
+  
+  .product-details p {
+    margin: 10px 0;
+  }
+  
+  /* Features Section */
+  .product-features {
+    margin-bottom: 20px;
+  }
+  
+  .product-features h3 {
+    margin-bottom: 10px;
+  }
+  
+  .product-features ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .product-features li {
+    /*background-color: #2e2e2e;*/
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Reviews Section */
+  .reviews-section {
+    margin: 20px 0;
+  }
+  
+  .review {
+    background-color: #2e2e2e;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Recommendations Section */
+  .recommendations-section {
+    margin: 20px 0;
+  }
+  
+  .recommended-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .recommended-product {
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 5px;
+    flex: 1 1 30%;
+  }
+  
+  .recommended-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  /* Playable & Capabilities Section */
+  .playable-capabilities-section {
+    padding: 20px;
+    background-color: #1e1e1e;
+  }
+  
+  .playable-platforms {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .platform {
+    background-color: #007bff;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+  }
+  
