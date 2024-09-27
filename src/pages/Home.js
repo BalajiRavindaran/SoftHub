@@ -1,39 +1,52 @@
-// src/pages/Home.js
 import React from 'react';
-import './Home.css'; // Add styles for the home page
-
+import { useNavigate } from 'react-router-dom';
+import './Home.css'; // Ensure styles are applied
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const categories = [
     {
       title: 'Streaming Services',
       description: 'Software for movies, music, and games',
-      imgUrl: '/images/Entertainment.png', // Add suitable images to your project
+      imgUrl: '/images/Entertainment.png',
+      slug: 'streaming-services', // Add a slug for cleaner URLs
     },
     {
       title: 'Games',
       description: 'Software for movies, music, and games',
-      imgUrl: '/images/Games.png', // Add suitable images to your project
+      imgUrl: '/images/Games.png',
+      slug: 'games',
     },
     {
       title: 'Microsoft',
       description: 'All things Microsoft software',
       imgUrl: '/images/Microsoft.png',
+      slug: 'microsoft',
     },
     {
       title: 'Video Editors',
       description: 'Top software for editing videos',
       imgUrl: '/images/VEditors.png',
+      slug: 'video-editors',
     },
-    // Add more categories as needed
   ];
+
+  const handleCategoryClick = (category) => {
+    // Navigate to the dynamic route
+    navigate(`/products/${category.slug}`);
+  };
 
   return (
     <div className="home-container">
-      <h1>Explore Software Categories</h1>
+      <h1>EXPLORE SOFTWARE CATEGORIES</h1>
       <div className="category-grid">
         {categories.map((category, index) => (
-          <div key={index} className="category-tile">
+          <div
+            key={index}
+            className="category-tile"
+            onClick={() => handleCategoryClick(category)}  // Navigate to dynamic URL
+          >
             <img src={category.imgUrl} alt={category.title} className="category-img" />
             <div className="category-content">
               <h2 className="category-title">{category.title}</h2>
