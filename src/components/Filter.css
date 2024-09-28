@@ -1,0 +1,62 @@
+.price-and-ratings-filter {
+    float: left;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .price-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .price-filter label {
+    margin-right: 10px;
+  }
+  
+  .price-filter input {
+    width: 60px;
+    padding: 5px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  
+  .ratings-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .ratings-filter label {
+    margin-right: 10px;
+  }
+  
+  .star-ratings {
+    display: flex;
+  }
+  
+  .star-rating {
+    font-size: 24px;
+    margin-right: 10px;
+    color: #ccc;
+    cursor: pointer;
+  }
+  
+  .star-rating.active {
+    color: #ffd700;
+  }
+  
+  .category-select {
+    width: 95%;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }

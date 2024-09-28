@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // Import to get params from the URL and navigate
 import './Products.css'; 
+import Filter from '../components/Filter';
+import '../components/Filter.css';
 
 const Products = () => {
   const { categorySlug } = useParams(); // Get categorySlug from URL parameters
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // For navigation purposes
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [rating, setRating] = useState(0);
   
 
   // Sample product data
@@ -26,11 +31,46 @@ const Products = () => {
   };
 
   // Filter products by categorySlug and search term
-  const filteredProducts = products.filter(
-    product =>
-      product.category.toLowerCase() === categorySlug.toLowerCase() &&
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter(product => {
+    let isInCategory = true;
+    let isInPriceRange = true;
+    let meetsMinRating = true;
+    let matchesSearch = true;
+
+    // Apply category filter only if categorySlug exists
+    if (categorySlug) {
+      isInCategory = product.category.toLowerCase() === categorySlug.toLowerCase();
+    }
+
+    // Apply price filter only if minPrice or maxPrice is set
+    if ((minPrice !== '' || maxPrice !== '') && product.price) {
+      const priceValue = parseFloat(product.price.replace('$', ''));
+      isInPriceRange = (minPrice === '' || parseFloat(minPrice.replace('$', '')) <= priceValue) &&
+                       (maxPrice === '' || priceValue <= parseFloat(maxPrice.replace('$', '')));
+    }
+
+    // Apply rating filter only if rating is greater than 0
+    if (rating > 0) {
+      meetsMinRating = product.rating >= rating;
+    }
+
+    // Apply search filter only if searchTerm is not empty
+    if (searchTerm.trim()) {
+      matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+
+    return isInCategory && isInPriceRange && meetsMinRating && matchesSearch;
+  });
+
+  // Add these new functions
+  const handleCategoryChange = (value) => {
+    // Handle category change logic here if needed
+    console.log('Selected Category:', value);
+  };
+
+  const handleRatingChange = (newRating) => {
+    setRating(newRating);
+  };
 
   const handleProductClick = (productId) => {
     // Navigate to a dynamic product details page
@@ -46,6 +86,18 @@ const Products = () => {
           placeholder="Search products..." 
           value={searchTerm} 
           onChange={(e) => setSearchTerm(e.target.value)} 
+        />
+      </div>
+      
+      <div className='filter-container'>
+        <Filter 
+          minPrice={minPrice} 
+          maxPrice={maxPrice} 
+          rating={rating} 
+          setSelectedCategory={handleCategoryChange} 
+          setMinPrice={setMinPrice}
+          setMaxPrice={setMaxPrice}
+          setRating={handleRatingChange} 
         />
       </div>
 
