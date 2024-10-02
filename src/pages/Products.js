@@ -39,14 +39,6 @@ const Products = () => {
     fetchProducts();
   }, [categorySlug]); // Refetch data whenever categorySlug changes
 
-  // Categories description
-  const categories = {
-    'games': 'All the best games available for various platforms.',
-    'microsoft': 'Explore the latest and greatest Microsoft products.',
-    'video-editors': 'The top software for all your video editing needs.',
-    'streaming-services': 'Entertainment software for streaming music, movies, and more.',
-  };
-
   // Filter products by categorySlug, search term, price, and rating
   const filteredProducts = products.filter(product => {
     let isInCategory = true;
