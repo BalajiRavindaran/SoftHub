@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Cart from './pages/Cart';
 import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
+import ProductForm from './pages/ProductForm';
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/products/:categorySlug" element={<Products />} />
         <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
-
+        <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
+        <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
       </Routes>
     </Router>
   );
