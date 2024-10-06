@@ -47,6 +47,9 @@ const Navbar = () => {
           <li>
             <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
           </li>
+          <li>
+            <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
+          </li>
         </ul>
       </nav>
 

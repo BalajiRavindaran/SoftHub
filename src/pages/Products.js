@@ -16,6 +16,7 @@ const Products = () => {
   const [products, setProducts] = useState([]); // Store fetched products
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [filteredResults, setFilteredResults] = useState([]);
 
   // Fetch products based on category from the API
   useEffect(() => {
@@ -58,13 +59,44 @@ const Products = () => {
       meetsMinRating = product.rating >= rating;
     }
 
-    // Apply search filter only if searchTerm is not empty
-    if (searchTerm.trim()) {
-      matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-
     return isInCategory && isInPriceRange && meetsMinRating && matchesSearch;
   });
+
+  const handleSearch = async () => {
+    console.log("handleSearch function called");
+    try {
+      const payload = {
+        queryStringParameters: {
+          searchTerm: searchTerm,
+          category: categorySlug
+        }
+      };
+  
+      const response = await fetch('https://r9hor2144d.execute-api.ca-central-1.amazonaws.com/dev', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        redirect: "follow"
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${await response.text()}`);
+      }
+  
+      const data = await response.json();
+      setFilteredResults(data.body);
+    } catch (error) {
+      console.error('Error fetching search results:', error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    if (filteredResults.length > 0) {
+      setProducts(filteredResults);
+    }
+  }, [filteredResults]);
 
   // Add these new functions
   const handleCategoryChange = (value) => {
@@ -99,6 +131,7 @@ const Products = () => {
               value={searchTerm} 
               onChange={(e) => setSearchTerm(e.target.value)} 
             />
+            <button onClick={handleSearch}>Search</button>
           </div>
           
           <div className='filter-container'>

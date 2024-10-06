@@ -10,6 +10,9 @@ import Cart from './pages/Cart';
 import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
 import AnalyticsPage from './components/AnalyticsPage';
+import MyProducts from './pages/Myproducts';
+import AddProductForm from './pages/AddProductForm';
+import EditProductPage from './pages/EditProduct';
 
 function App() {
   return (
@@ -24,7 +27,9 @@ function App() {
         <Route path="/products/:categorySlug" element={<Products />} />
         <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
         <Route path="/dashboard" element={<AnalyticsPage />} />
-
+        <Route path="/myproducts" element={<MyProducts />} />
+        <Route path="/addProducts" element={<AddProductForm />} />
+        <Route path="/edit/:productId" element={<EditProductPage />} />
 
       </Routes>
     </Router>
