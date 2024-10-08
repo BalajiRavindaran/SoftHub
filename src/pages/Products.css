@@ -53,6 +53,7 @@ p {
   }
   
   .product-name {
+    color: black;
     font-size: 22px;
     font-weight: bold;
     margin: 10px 0;
