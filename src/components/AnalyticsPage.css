@@ -1,0 +1,63 @@
+.analytics-page {
+  padding: 55px;
+}
+
+.charts-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px; /* Space between grid items */
+}
+
+.chart-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 250px; /* Fixed height for uniformity */
+}
+
+.chart-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+
+
+.chart-group {
+  width: 100%;
+}
+
+.software-list {
+  margin-top: 30px;
+}
+
+.software-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.software-list table th,
+.software-list table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}

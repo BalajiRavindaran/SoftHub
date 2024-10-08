@@ -2,9 +2,6 @@
   display: flex;
   flex-direction: row;
   padding: 2px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   justify-content: center;
   gap: 10px;
 }
@@ -12,7 +9,7 @@
 .price-filter {
   display: flex;
   align-items: center;
-  /* margin-bottom: 10px; */
+  
 }
 
 .price-filter label {
@@ -23,12 +20,21 @@
   width: 60px;
   padding: 5px;
   font-size: 12px;
-  border: none;
-  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
   margin-right: 5px;
   margin-left: 5px;
 }
 
+.price-filter input[type="number"] {
+  background-color: rgba(255, 255, 255, 0.1); 
+  color: #ccc; /* Dark text color */
+}
+.price-filter input[type="number"]:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #80bdff; /* Blue border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Soft blue glow on focus */
+}
 .ratings-filter {
   display: flex;
   align-items: center;
@@ -58,6 +64,8 @@
   width: 15%;
   padding: 5px;
   font-size: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ccc;
 }
