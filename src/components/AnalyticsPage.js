@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,7 +8,6 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  ResponsiveContainer,
 } from 'recharts';
 import './AnalyticsPage.css';
 import axios from 'axios';
@@ -19,17 +18,26 @@ const AnalyticsPage = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [providerId, setProviderId] = useState(''); // For inputting provider-id
   const [showModal, setShowModal] = useState(false); // To control the modal visibility
+  const [loading, setLoading] = useState(false);     // Loading state
+  const [error, setError] = useState(null);          // Error state
 
   // Fetch metrics from API based on provider-id
   const fetchMetrics = async (id) => {
+    setLoading(true);   // Start loading
+    setError(null);     // Reset error state
+
     try {
       const response = await axios.get(`https://bcre43v783.execute-api.ca-central-1.amazonaws.com/default/GET-Provider-Dashboard?provider-id=${id}`);
       const data = response.data;
 
       setMetrics(data); // Set metrics from the fetched data
       setSoftwareList(data); // Set software list from the fetched data
+      setSelectedProducts([]); // Reset selected products for new metrics
     } catch (error) {
       console.error('Error fetching metrics:', error);
+      setError('Failed to fetch metrics. Please try again.'); // Set error message
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -88,103 +96,118 @@ const AnalyticsPage = () => {
       )}
       <button onClick={() => setShowModal(true)}>Set Provider ID</button>
 
-      {/* Chart Section */}
-      <div className="charts-container">
-        {selectedProducts.length > 0 ? (
-          selectedProducts.map((product) => (
-            <div key={product} className="chart-group">
-              <h2>{product}</h2>
+      {/* Loading and Error Handling */}
+      {loading ? (
+        <p>Loading data...</p>
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : (
+        <div className="charts-container">
+          {selectedProducts.length > 0 ? (
+            selectedProducts.map((product) => (
+              <div key={product} className="chart-group">
+                <h2>{product}</h2>
+                <div className="charts-grid">
+                  {/* Active Users Line Chart */}
+                  <div className="chart-card">
+                    <h3>Active Users</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <LineChart
+                        width={300}
+                        height={200}
+                        data={Object.entries(prepareChartData(product).find(data => data.product === product).activeUsers || {}).map(([day, userCount]) => ({ day, users: userCount }))}
+                      >
+                        <XAxis dataKey="day" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Line type="monotone" dataKey="users" stroke="#8884d8" />
+                      </LineChart>
+                    </div>
+                  </div>
 
-              {/* Active Users Line Chart */}
-              <div className="chart-card">
-                <h3>Active Users</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={Object.entries(prepareChartData(product).find(data => data.product === product).activeUsers).map(([day, userCount]) => ({ day, users: userCount }))}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey="users" stroke="#8884d8" />
-                  </LineChart>
-                </ResponsiveContainer>
+                  {/* Total Sales Line Chart */}
+                  <div className="chart-card">
+                    <h3>Total Sales</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <LineChart
+                        width={300}
+                        height={200}
+                        data={Object.entries(prepareChartData(product).find(data => data.product === product).totalSales || {}).map(([day, salesCount]) => ({ day, sales: salesCount }))}
+                      >
+                        <XAxis dataKey="day" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Line type="monotone" dataKey="sales" stroke="#82ca9d" />
+                      </LineChart>
+                    </div>
+                  </div>
+
+                  {/* Total Reviews Bar Chart */}
+                  <div className="chart-card">
+                    <h3>Total Reviews</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <BarChart width={300} height={200} data={[{ product, reviews: prepareChartData(product).find(data => data.product === product).reviews || 0 }]}>
+                        <XAxis dataKey="product" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Bar dataKey="reviews" fill="#8884d8" />
+                      </BarChart>
+                    </div>
+                  </div>
+
+                  {/* Average Ratings Bar Chart */}
+                  <div className="chart-card">
+                    <h3>Average Ratings</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <BarChart width={300} height={200} data={[{ product, rating: prepareChartData(product).find(data => data.product === product).rating || 0 }]}>
+                        <XAxis dataKey="product" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Bar dataKey="rating" fill="#82ca9d" />
+                      </BarChart>
+                    </div>
+                  </div>
+
+                  {/* Conversion Rate Bar Chart */}
+                  <div className="chart-card">
+                    <h3>Conversion Rates</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <BarChart width={300} height={200} data={[{ product, conversionRate: prepareChartData(product).find(data => data.product === product).conversionRate || 0 }]}>
+                        <XAxis dataKey="product" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Bar dataKey="conversionRate" fill="#8884d8" />
+                      </BarChart>
+                    </div>
+                  </div>
+
+                  {/* Revenue Line Chart */}
+                  <div className="chart-card">
+                    <h3>Revenue</h3>
+                    <div style={{ width: '100%', height: 200 }}>
+                      <LineChart width={300} height={200} data={[{ product, revenue: prepareChartData(product).find(data => data.product === product).revenue || 0 }]}>
+                        <XAxis dataKey="product" />
+                        <YAxis />
+                        <Tooltip />
+                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                        <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+                      </LineChart>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              {/* Total Sales Line Chart */}
-              <div className="chart-card">
-                <h3>Total Sales</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={Object.entries(prepareChartData(product).find(data => data.product === product).totalSales).map(([day, salesCount]) => ({ day, sales: salesCount }))}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey="sales" stroke="#82ca9d" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Total Reviews Bar Chart */}
-              <div className="chart-card">
-                <h3>Total Reviews</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={[{ product, reviews: prepareChartData(product).find(data => data.product === product).reviews }]}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Bar dataKey="reviews" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Average Ratings Bar Chart */}
-              <div className="chart-card">
-                <h3>Average Ratings</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={[{ product, rating: prepareChartData(product).find(data => data.product === product).rating }]}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Bar dataKey="rating" fill="#82ca9d" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Conversion Rate Bar Chart */}
-              <div className="chart-card">
-                <h3>Conversion Rates</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={[{ product, conversionRate: prepareChartData(product).find(data => data.product === product).conversionRate }]}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Bar dataKey="conversionRate" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Revenue Line Chart */}
-              <div className="chart-card">
-                <h3>Revenue</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={[{ product, revenue: prepareChartData(product).find(data => data.product === product).revenue }]}>
-                    <XAxis dataKey="product" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>Please select products to analyze.</p>
-        )}
-      </div>
-
+            ))
+          ) : (
+            <p>Please select products to analyze.</p>
+          )}
+        </div>
+      )}
+      
       {/* Software List */}
       <div className="software-list">
         <h3>Select Products to Analyze</h3>
