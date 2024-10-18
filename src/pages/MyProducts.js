@@ -29,7 +29,7 @@ const MyProducts = () => {
 
         try {
             const response = await fetch(
-                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=2`
+                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=1`
             );
             const data = await response.json();
             setProducts(data.body.products);
@@ -59,7 +59,7 @@ const MyProducts = () => {
 
     const handleEdit = (productId) => {
         console.log(`Editing product: ${productId}`);
-        navigate(`/edit/${productId}`);
+        navigate(`/provider/edit-software/${productId}`);
         // Implement edit functionality here
     };
 
@@ -131,7 +131,7 @@ const MyProducts = () => {
             <div className="product-grid">
                 <div className="add-product-button" >
                     <button onClick={() => 
-                        navigate("/addProducts")
+                        navigate("/provider/add-software")
                     }>+</button>
                 </div>
                 {filteredProducts.map(product => (
