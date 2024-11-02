@@ -12,6 +12,7 @@ import ProductDetails from './pages/ProductDetails';
 import AnalyticsPage from './components/AnalyticsPage';
 import MyProducts from './pages/MyProducts';
 import ProductForm from './pages/ProductForm';
+import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/myproducts" element={<MyProducts />} />
         <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
         <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
+        <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
       </Routes>
     </Router>
   );

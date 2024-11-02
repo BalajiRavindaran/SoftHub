@@ -48,6 +48,9 @@ const Navbar = () => {
             <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
           </li>
           <li>
+            <Link to="/admindashboard" onClick={closeMenu}>Admin Dashboard</Link>
+          </li>
+          <li>
             <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
           </li>
         </ul>
