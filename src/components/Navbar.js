@@ -53,6 +53,10 @@ const Navbar = () => {
           <li>
             <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
           </li>
+          <li>
+            <Link to="/quicksight" onClick={closeMenu}>QuickSight</Link>
+          </li>
+
         </ul>
       </nav>
 

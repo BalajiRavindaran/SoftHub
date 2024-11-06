@@ -14,6 +14,8 @@ import MyProducts from './pages/MyProducts';
 import ProductForm from './pages/ProductForm';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 
+import QuickSightDashboard from './pages/QuickSightDashboard';
+
 function App() {
   return (
     <Router>
@@ -31,6 +33,7 @@ function App() {
         <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
         <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
         <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
+        <Route path="/quicksight" element={<QuickSightDashboard />} />
       </Routes>
     </Router>
   );
