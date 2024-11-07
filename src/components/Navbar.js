@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
+import AuthContext from './AuthContext';
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout } = useContext(AuthContext);
 
   // Toggle the menu open/close
   const toggleMenu = () => {
@@ -13,6 +16,11 @@ const Navbar = () => {
   // Close menu on link click
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/';
   };
 
   return (
@@ -38,9 +46,13 @@ const Navbar = () => {
           <li>
             <Link to="/contact" onClick={closeMenu}>Contact</Link>
           </li>
-          <li>
-            <Link to="/login" onClick={closeMenu}>Login</Link>
-          </li>
+          {!isAuthenticated && (
+            <>
+              <li>
+                <Link to="/login" onClick={closeMenu}>Login</Link>
+              </li>
+            </>
+          )}
           <li>
             <Link to="/cart" onClick={closeMenu}>Cart</Link>
           </li>
@@ -51,12 +63,18 @@ const Navbar = () => {
             <Link to="/admindashboard" onClick={closeMenu}>Admin Dashboard</Link>
           </li>
           <li>
-            <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
-          </li>
-          <li>
             <Link to="/quicksight" onClick={closeMenu}>QuickSight</Link>
           </li>
-
+          <li>
+            <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
+          </li>
+          {
+            isAuthenticated && (
+              <li>
+                <Link to="/" onClick={handleLogout}>Logout</Link>
+              </li>
+            )
+          }
         </ul>
       </nav>
 
