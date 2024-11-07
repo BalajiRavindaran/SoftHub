@@ -16,43 +16,13 @@ const settings = {
   centerPadding: '0',
 };
 
-// Sample data for reviews
-const sampleReviews = [
-  {
-    id: 1,
-    content: "Amazing product! Highly recommend for anyone looking to improve their workflow.",
-    rating: 5,
-    postedAt: "2024-10-31 10:00",
-  },
-  {
-    id: 2,
-    content: "Good value for the price, but could use more features.",
-    rating: 4,
-    postedAt: "2024-11-01 14:30",
-  },
-  {
-    id: 3,
-    content: "The interface is a bit clunky, but overall it does the job.",
-    rating: 3,
-    postedAt: "2024-11-02 08:45",
-  },
-  {
-    id: 4,
-    content: "Not what I expected. Limited functionality for the price.",
-    rating: 2,
-    postedAt: "2024-11-02 12:20",
-  },
-];
-
-
-
 const ProductDetails = () => {
   const { categorySlug, productId } = useParams();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState([]);  // Initialize as an empty array
   const [newReview, setNewReview] = useState("");
   const [stars, setStars] = useState(0);
 
@@ -78,10 +48,14 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`https://your-api-url/productReviews`, { params: { productId } });
-        setReviews(response.data);
+        const response = await axios.get(`https://jeyfj1w15j.execute-api.ca-central-1.amazonaws.com/reviews/reviews`, {
+          params: { productId }
+        });
+        // Assuming the response structure contains a 'reviews' field
+        setReviews(Array.isArray(response.data.reviews) ? response.data.reviews : []);  // Ensure response is an array
       } catch (error) {
         console.error("Error fetching reviews:", error);
+        setReviews([]);  // Fallback to an empty array on error
       }
     };
     fetchReviews();
@@ -92,14 +66,13 @@ const ProductDetails = () => {
 
     const reviewData = {
       productId,
-      reviewText: newReview,
-      stars,
-      timestamp: new Date().toISOString(),
+      content: newReview,
+      rating: stars
     };
 
     try {
-      await axios.post(`https://your-api-url/productReviews`, reviewData);
-      setReviews([...reviews, reviewData]);
+      const response = await axios.post(`https://jeyfj1w15j.execute-api.ca-central-1.amazonaws.com/reviews/reviews`, reviewData);
+      setReviews([...reviews, { ...reviewData, postedAt: new Date().toISOString() }]);
       setNewReview("");
       setStars(0);
     } catch (error) {
@@ -195,14 +168,14 @@ const ProductDetails = () => {
         <button onClick={handlePostReview}>Post Review</button>
 
         <div className="review-list">
-    {sampleReviews.map((review) => (
-      <div key={review.id} className="review-item">
-        <p><strong>Rating:</strong> <span className="rating-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></p>
-        <p>{review.content}</p>
-        <time>Posted on: {review.postedAt}</time>
-      </div>
-    ))}
-  </div>
+          {Array.isArray(reviews) && reviews.map((review) => (
+            <div key={review['review-id']} className="review-item">
+              <p><strong>Rating:</strong> <span className="rating-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></p>
+              <p>{review.content}</p>
+              <time>Posted on: {new Date(review['posted-at']).toLocaleString()}</time>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Recommendations Section */}
