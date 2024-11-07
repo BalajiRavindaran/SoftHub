@@ -13,29 +13,33 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import MyProducts from './pages/MyProducts';
 import ProductForm from './pages/ProductForm';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
-
+import SignUp from './pages/SignUp';
+import { AuthProvider } from './components/AuthContext';
 import QuickSightDashboard from './pages/QuickSightDashboard';
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/products/:categorySlug" element={<Products />} />
-        <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
-        <Route path="/dashboard" element={<AnalyticsPage />} />
-        <Route path="/myproducts" element={<MyProducts />} />
-        <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
-        <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
-        <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
-        <Route path="/quicksight" element={<QuickSightDashboard />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/products/:categorySlug" element={<Products />} />
+          <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
+          <Route path="/dashboard" element={<AnalyticsPage />} />
+          <Route path="/myproducts" element={<MyProducts />} />
+          <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
+          <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
+          <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
+          <Route path="/quicksight" element={<QuickSightDashboard />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
