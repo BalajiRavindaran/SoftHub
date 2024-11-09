@@ -14,26 +14,24 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const attributeList = [
             new CognitoUserAttribute({
                 Name: 'custom:role',
                 Value: role
             })
         ];
-
-        try {
-            UserPool.signUp(email, password, attributeList, null, (err, data) => {
-                if (err) {
-                    console.error('Error during registration:', err);
-                } else {
-                    console.log('Registration successful:', data);
-                }
-            })
-        } catch (error) {
-            console.error('Error during registration:', error);
-        }
+    
+        UserPool.signUp(email, password, attributeList, null, (err, data) => {
+            if (err) {
+                console.error('Error during registration:', err);
+            } else {
+                console.log('Registration successful:', data);
+                navigate('/confirm-email'); // Redirect to confirmation page
+            }
+        });
     };
+    
 
     return (
         <div className="signup-container">
