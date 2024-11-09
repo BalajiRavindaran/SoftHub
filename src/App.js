@@ -16,6 +16,7 @@ import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import SignUp from './pages/SignUp';
 import { AuthProvider } from './components/AuthContext';
 import QuickSightDashboard from './pages/QuickSightDashboard';
+import ConfirmEmail from './pages/ConfirmEmail';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
           <Route path="/quicksight" element={<QuickSightDashboard />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
         </Routes>
       </Router>
     </AuthProvider>
