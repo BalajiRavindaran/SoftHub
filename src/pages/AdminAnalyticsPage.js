@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 import './AdminAnalyticsPage.css';
-
-const LoadingSpinner = () => (
-  <div className="loading-spinner">
-    <div className="spinner"></div>
-  </div>
-);
+import LoadingSpinner from '../components/LoadingSpinner'; 
 
 const AdminAnalyticsPage = () => {
   const salesChartRef = useRef(null);
@@ -26,7 +21,7 @@ const AdminAnalyticsPage = () => {
   const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [successPopupVisible, setSuccessPopupVisible] = useState(false); // New state for success popup
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const destroyChart = (chartRef) => {
     if (chartRef.current) {
@@ -122,6 +117,7 @@ const AdminAnalyticsPage = () => {
       alert('Please enter an email ID.');
       return;
     }
+    console.log('Setting loading to true');
     setLoading(true);
     try {
       const response = await fetch(`https://0soum3zemc.execute-api.ca-central-1.amazonaws.com/dev/users?email=${email}`);
@@ -139,6 +135,7 @@ const AdminAnalyticsPage = () => {
       console.error('Error fetching user details:', error);
     }finally {
       setLoading(false);
+      console.log('Setting loading to false');
     }
   };
 
@@ -193,6 +190,7 @@ const AdminAnalyticsPage = () => {
   return (
     <div className="analytics-page">
       <h2>Admin Dashboard</h2>
+      {loading && <LoadingSpinner />}
       <div className="grid-container">
         <div className="chart-container animated"><canvas id="salesChart"></canvas></div>
         <div className="chart-container animated"><canvas id="revenueChart"></canvas></div>
