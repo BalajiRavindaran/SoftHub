@@ -8,8 +8,6 @@ import { useAuth } from '../components/AuthContext';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState('Consumer');
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -19,19 +17,27 @@ const Login = () => {
         const user = new CognitoUser({
             Username: email,
             Pool: UserPool,
-        })
+        });
 
         const authDetails = new AuthenticationDetails({
             Username: email,
             Password: password,
-        })
+        });
 
         user.authenticateUser(authDetails, {
             onSuccess: (result) => {
                 console.log('Login successful:', result);
-                const session = result.getAccessToken().getJwtToken();
-                login();
-                navigate('/dashboard');
+                const idToken = result.getIdToken().getJwtToken();
+                const accessToken = result.getAccessToken().getJwtToken();
+                const refreshToken = result.getRefreshToken().getToken();
+
+                // Save tokens to local storage or context
+                localStorage.setItem('idToken', idToken);
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                login(); // Update auth context if necessary
+                navigate('/dashboard'); // Navigate to the dashboard
             },
             onFailure: (err) => {
                 console.error('Login failed:', err);
@@ -39,7 +45,7 @@ const Login = () => {
             newPasswordRequired: (data) => {
                 console.log('New password required:', data);
             },
-        })
+        });
     };
 
     return (

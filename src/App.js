@@ -15,7 +15,6 @@ import ProductForm from './pages/ProductForm';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import SignUp from './pages/SignUp';
 import { AuthProvider } from './components/AuthContext';
-import QuickSightDashboard from './pages/QuickSightDashboard';
 import ConfirmEmail from './pages/ConfirmEmail';
 
 function App() {
@@ -36,7 +35,6 @@ function App() {
           <Route path="/provider/add-software" element={<ProductForm isEditMode={false} />} />
           <Route path="/provider/edit-software/:productId" element={<ProductForm isEditMode={true} />} />
           <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
-          <Route path="/quicksight" element={<QuickSightDashboard />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/confirm-email" element={<ConfirmEmail />} />
         </Routes>
