@@ -25,19 +25,12 @@ const Login = () => {
         });
 
         user.authenticateUser(authDetails, {
-            onSuccess: (result) => {
+            onSuccess: async (result) => {
                 console.log('Login successful:', result);
-                const idToken = result.getIdToken().getJwtToken();
-                const accessToken = result.getAccessToken().getJwtToken();
-                const refreshToken = result.getRefreshToken().getToken();
-
-                // Save tokens to local storage or context
-                localStorage.setItem('idToken', idToken);
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-
-                login(); // Update auth context if necessary
-                navigate('/dashboard'); // Navigate to the dashboard
+                const session = result.getAccessToken().getJwtToken();
+                const userRole = result.getIdToken().payload['custom:role'] || 'Consumer'; // Ensure safe access
+                login(user);
+                navigate('/');
             },
             onFailure: (err) => {
                 console.error('Login failed:', err);
