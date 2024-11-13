@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
 import './ProductDetails.css';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+const stripePromise = loadStripe('pk_test_51QK8A7IKDma6OOXz5P6x8Y82Ph13QXoIeJnPfNkZCy3eNB6qMUhfArnpFwG3CsDEWtw9wQbKHzF4nhwNFjaHUWuD00L6dLJNuO');  // Replace with your Stripe publishable key
 
 const settings = {
   dots: true,
@@ -22,7 +27,7 @@ const ProductDetails = () => {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [reviews, setReviews] = useState([]);  // Initialize as an empty array
+  const [reviews, setReviews] = useState([]);  
   const [newReview, setNewReview] = useState("");
   const [stars, setStars] = useState(0);
   const [sentiment, setSentiment] = useState(null);
@@ -52,11 +57,10 @@ const ProductDetails = () => {
         const response = await axios.get(`https://jeyfj1w15j.execute-api.ca-central-1.amazonaws.com/reviews/reviews`, {
           params: { productId }
         });
-        // Assuming the response structure contains a 'reviews' field
-        setReviews(Array.isArray(response.data.reviews) ? response.data.reviews : []);  // Ensure response is an array
+        setReviews(Array.isArray(response.data.reviews) ? response.data.reviews : []);
       } catch (error) {
         console.error("Error fetching reviews:", error);
-        setReviews([]);  // Fallback to an empty array on error
+        setReviews([]);
       }
     };
     fetchReviews();
@@ -68,7 +72,7 @@ const ProductDetails = () => {
         const response = await axios.get(`https://jh3oxqtqn4.execute-api.ca-central-1.amazonaws.com/productId/analyzeReview`, {
           params: { productId }
         });
-        setSentiment(response.data[0]); // Assuming the API returns an array, and we use the first object
+        setSentiment(response.data[0]);
       } catch (error) {
         console.error("Error fetching sentiment analysis:", error);
       }
@@ -92,6 +96,40 @@ const ProductDetails = () => {
       setStars(0);
     } catch (error) {
       console.error("Error posting review:", error);
+    }
+  };
+
+  // Handle the Buy button click
+  const handleBuyButtonClick = async () => {
+    const stripe = await stripePromise;  // Load Stripe.js
+
+    try {
+      const response = await axios.post('https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment', { 
+        amount: product.Price * 100, // amount in cents
+        currency: 'usd',
+        description: `Payment for ${product.Name}`,
+      });
+
+      const { client_secret } = response.data;
+
+      // Confirm the payment using Stripe.js
+      const { error } = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: CardElement, // cardElement should be a reference to your CardElement component
+        },
+      });
+
+      if (error) {
+        console.error("Payment failed:", error);
+        alert('Payment failed');
+      } else {
+        if (CardElement.status === 'succeeded') {
+          alert('Payment successful!');
+        }
+      }
+    } catch (error) {
+      console.error("Error during payment:", error);
+      alert('Error during payment processing');
     }
   };
 
@@ -130,7 +168,7 @@ const ProductDetails = () => {
                 </div>
               )}
             <div className="buy-button-container">
-              <button className="buy-button">Buy {product.Price}</button>
+              <button className="buy-button" onClick={handleBuyButtonClick}>Buy ${product.Price}</button>
             </div>
           </div>
         </div>
@@ -224,6 +262,8 @@ const ProductDetails = () => {
           <span className="platform">{product.Platform}</span>
         </div>
       </section>
+
+
     </div>
   );
 };
