@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import AuthContext from './AuthContext';
+import logo from '../images/Logo.PNG';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +66,10 @@ const Navbar = () => {
   return (
     <>
       <nav className={`navbar ${isOpen ? 'blurred' : ''}`}>
-        <h2 className="logo">SoftHub</h2>
+      <div className="logo-container">
+      <img src= {logo} alt="SoftHub Logo" className="logo-image" />
+      <h2 className="logo">SoftHub</h2>
+      </div>
 
         {/* Hamburger menu for small screens */}
         <div className={`hamburger ${isOpen ? 'open' : ''}`} onClick={toggleMenu}>
