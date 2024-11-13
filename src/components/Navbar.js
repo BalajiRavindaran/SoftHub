@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import './Navbar.css';
 import AuthContext from './AuthContext';
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout, userRole } = useContext(AuthContext);
 
   // Toggle the menu open/close
   const toggleMenu = () => {
@@ -23,6 +22,46 @@ const Navbar = () => {
     window.location.href = '/';
   };
 
+  const renderMenuItems = () => {
+    switch (userRole) {
+      case 'Consumer':
+        return (
+          <>
+            <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+            <li><Link to="/cart" onClick={closeMenu}>Cart</Link></li>
+            <li><Link to="/about" onClick={closeMenu}>About</Link></li>
+            <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
+          </>
+        );
+      case 'Provider':
+        return (
+          <>
+            <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+            <li><Link to="/myproducts" onClick={closeMenu}>My Products</Link></li>
+            <li><Link to="/dashboard" onClick={closeMenu}>Analytics</Link></li>
+          </>
+        );
+      case 'Admin':
+        return (
+          <>
+            <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+            <li><Link to="/admindashboard" onClick={closeMenu}>Dashboard</Link></li>
+            <li><Link to="/quicksight" onClick={closeMenu}>QuickSight</Link></li>
+            <li><Link to="/about" onClick={closeMenu}>About</Link></li>
+            <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
+          </>
+        );
+      default:
+        return (
+          <>
+            <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+            <li><Link to="/about" onClick={closeMenu}>About</Link></li>
+            <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
+          </>
+        );
+    }
+  };
+
   return (
     <>
       <nav className={`navbar ${isOpen ? 'blurred' : ''}`}>
@@ -37,44 +76,18 @@ const Navbar = () => {
 
         {/* Nav links */}
         <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
-          <li>
-            <Link to="/" onClick={closeMenu}>Home</Link>
-          </li>
-          <li>
-            <Link to="/about" onClick={closeMenu}>About</Link>
-          </li>
-          <li>
-            <Link to="/contact" onClick={closeMenu}>Contact</Link>
-          </li>
+          {renderMenuItems()}
+
           {!isAuthenticated && (
             <>
-              <li>
-                <Link to="/login" onClick={closeMenu}>Login</Link>
-              </li>
+              <li><Link to="/login" onClick={closeMenu}>Login</Link></li>
+              <li><Link to="/signup" onClick={closeMenu}>Signup</Link></li>
             </>
           )}
-          <li>
-            <Link to="/cart" onClick={closeMenu}>Cart</Link>
-          </li>
-          <li>
-            <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/admindashboard" onClick={closeMenu}>Admin Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/quicksight" onClick={closeMenu}>QuickSight</Link>
-          </li>
-          <li>
-            <Link to="/myproducts" onClick={closeMenu}>MyProducts</Link>
-          </li>
-          {
-            isAuthenticated && (
-              <li>
-                <Link to="/" onClick={handleLogout}>Logout</Link>
-              </li>
-            )
-          }
+
+          {isAuthenticated && (
+            <li><Link to="/" onClick={handleLogout}>Logout</Link></li>
+          )}
         </ul>
       </nav>
 
