@@ -65,7 +65,7 @@ const Navbar = () => {
   return (
     <>
       <nav className={`navbar ${isOpen ? 'blurred' : ''}`}>
-        <h2 className="logo">Software Hub</h2>
+        <h2 className="logo">SoftHub</h2>
 
         {/* Hamburger menu for small screens */}
         <div className={`hamburger ${isOpen ? 'open' : ''}`} onClick={toggleMenu}>
