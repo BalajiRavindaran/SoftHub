@@ -25,6 +25,7 @@ const ProductDetails = () => {
   const [reviews, setReviews] = useState([]);  // Initialize as an empty array
   const [newReview, setNewReview] = useState("");
   const [stars, setStars] = useState(0);
+  const [sentiment, setSentiment] = useState(null);
 
   // Fetch product details
   useEffect(() => {
@@ -59,6 +60,20 @@ const ProductDetails = () => {
       }
     };
     fetchReviews();
+  }, [productId]);
+
+  useEffect(() => {
+    const fetchSentiment = async () => {
+      try {
+        const response = await axios.get(`https://jh3oxqtqn4.execute-api.ca-central-1.amazonaws.com/productId/analyzeReview`, {
+          params: { productId }
+        });
+        setSentiment(response.data[0]); // Assuming the API returns an array, and we use the first object
+      } catch (error) {
+        console.error("Error fetching sentiment analysis:", error);
+      }
+    };
+    fetchSentiment();
   }, [productId]);
 
   const handlePostReview = async () => {
@@ -102,9 +117,18 @@ const ProductDetails = () => {
             <h1 className="game-title">{product.Name}</h1>
             <p className="developer-info">{product.Developer} - {categorySlug}</p>
             <div className="tags">
-              <span className="tag">New</span>
               <span className="tag">Supported Platforms: {product.Platform}</span>
             </div>
+            {sentiment && (
+                <div className="rainbow">
+                  <p>What Everyone Thinks: </p>
+                  <p>
+                    {Array.from({ length: parseInt(sentiment.label[0]) }).map((_, i) => (
+                      <span key={i}>⭐</span>
+                    ))}
+                  </p>
+                </div>
+              )}
             <div className="buy-button-container">
               <button className="buy-button">Buy {product.Price}</button>
             </div>
