@@ -1,6 +1,6 @@
 /* General Styling */
 .contact-container {
-    padding: 40px;
+    padding: 100px 100px;
     max-width: 900px;
     margin: 0 auto;
     font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -16,12 +16,12 @@
   .contact-header h1 {
     font-size: 2.5rem;
     margin-bottom: 15px;
-    color: #000;
+    color: #ff9500;
     font-weight: 600;
   }
   
   .contact-header p {
-    color: #6e6e73;
+    color: #f9f9f9;
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
@@ -69,7 +69,7 @@
   }
   
   .contact-btn {
-    background-color: #0071e3;
+    background-color: #ff9500;
     color: #fff;
     padding: 12px 20px;
     border: none;
@@ -81,7 +81,7 @@
   }
   
   .contact-btn:hover {
-    background-color: #005bb5;
+    background-color: #cd831c;
   }
   
   /* Contact Information */

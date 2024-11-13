@@ -8,7 +8,7 @@
 }
 
 h2 {
-    color: #007bff;
+    color: #ff9500;
     text-align: center;
 }
 
@@ -27,7 +27,7 @@ input {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #ff9500;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -37,7 +37,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #ff9500;
 }
 
 p {
@@ -46,7 +46,7 @@ p {
 }
 
 p a {
-    color: #007bff;
+    color: #ff9500;
     text-decoration: none;
 }
 
