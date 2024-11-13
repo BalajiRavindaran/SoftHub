@@ -4,6 +4,8 @@
     min-height: 100vh;
     margin-top: 60px;
     text-align: center;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   
   .search-bar {

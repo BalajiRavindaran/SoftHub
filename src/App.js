@@ -17,6 +17,8 @@ import SignUp from './pages/SignUp';
 import { AuthProvider } from './components/AuthContext';
 import ConfirmEmail from './pages/ConfirmEmail';
 
+import ContactAndAbout from './pages/ContactAndAbout';
+
 function App() {
   return (
     <AuthProvider>
@@ -24,8 +26,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<ContactAndAbout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/products/:categorySlug" element={<Products />} />

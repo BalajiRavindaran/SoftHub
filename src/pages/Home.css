@@ -11,7 +11,7 @@ h1{
   padding: 0px 20px;
   background-color: #001219;
   min-height: 100vh;  /* Ensures the container takes up at least the full viewport height */
-  margin-top: 60px;   /* Adjust for navbar height */
+  -ms-overflow-style: none;
 }
 
 @media (max-width: 768px) {
