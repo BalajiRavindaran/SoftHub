@@ -54,7 +54,8 @@ const Navbar = () => {
         return (
           <>
             <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-            <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
+            <li><Link to="/api" onClick={closeMenu}>API</Link></li>
+            <li><Link to="/contact" onClick={closeMenu}>About</Link></li>
           </>
         );
     }

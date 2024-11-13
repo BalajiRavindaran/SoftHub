@@ -18,6 +18,7 @@ import { AuthProvider } from './components/AuthContext';
 import ConfirmEmail from './pages/ConfirmEmail';
 
 import ContactAndAbout from './pages/ContactAndAbout';
+import ApiDocumentation from './pages/ApiDocumentation';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/contact" element={<ContactAndAbout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/api" element={<ApiDocumentation />} />
           <Route path="/products/:categorySlug" element={<Products />} />
           <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
           <Route path="/dashboard" element={<AnalyticsPage />} />
