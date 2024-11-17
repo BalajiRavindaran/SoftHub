@@ -20,6 +20,8 @@ import ConfirmEmail from './pages/ConfirmEmail';
 import ContactAndAbout from './pages/ContactAndAbout';
 import ApiDocumentation from './pages/ApiDocumentation';
 
+import Stripe from './pages/Stripe';
+
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +42,7 @@ function App() {
           <Route path="/admindashboard" element={<AdminAnalyticsPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/confirm-email" element={<ConfirmEmail />} />
+          <Route path="/stripe" element={<Stripe />} />
         </Routes>
       </Router>
     </AuthProvider>
