@@ -22,6 +22,12 @@ import ApiDocumentation from './pages/ApiDocumentation';
 
 import Stripe from './pages/Stripe';
 
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('pk_test_51QK8A7IKDma6OOXz5P6x8Y82Ph13QXoIeJnPfNkZCy3eNB6qMUhfArnpFwG3CsDEWtw9wQbKHzF4nhwNFjaHUWuD00L6dLJNuO');
+
+
 function App() {
   return (
     <AuthProvider>
@@ -31,7 +37,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<ContactAndAbout />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/cart" element={<Cart />} />
+          
+          <Route path="/cart" element={<Elements stripe={stripePromise}><Cart /></Elements>} />
+          
           <Route path="/api" element={<ApiDocumentation />} />
           <Route path="/products/:categorySlug" element={<Products />} />
           <Route path="/products/:categorySlug/:productId" element={<ProductDetails />} />
