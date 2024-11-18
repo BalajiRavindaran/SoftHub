@@ -1,22 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
-import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
 
 import "./ProductDetails.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-const stripePromise = loadStripe(
-  "pk_test_51QK8A7IKDma6OOXz5P6x8Y82Ph13QXoIeJnPfNkZCy3eNB6qMUhfArnpFwG3CsDEWtw9wQbKHzF4nhwNFjaHUWuD00L6dLJNuO"
-); // Replace with your Stripe publishable key
 
 const settings = {
   dots: true,
@@ -152,43 +141,6 @@ const ProductDetails = () => {
     }
   };
 
-  // Handle the Buy button click
-  const handleBuyButtonClick = async () => {
-    const stripe = await stripePromise; // Load Stripe.js
-
-    try {
-      const response = await axios.post(
-        "https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment",
-        {
-          amount: product.Price * 100, // amount in cents
-          currency: "usd",
-          description: `Payment for ${product.Name}`,
-        }
-      );
-
-      const { client_secret } = response.data;
-
-      // Confirm the payment using Stripe.js
-      const { error } = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: CardElement, // cardElement should be a reference to your CardElement component
-        },
-      });
-
-      if (error) {
-        console.error("Payment failed:", error);
-        alert("Payment failed");
-      } else {
-        if (CardElement.status === "succeeded") {
-          alert("Payment successful!");
-        }
-      }
-    } catch (error) {
-      console.error("Error during payment:", error);
-      alert("Error during payment processing");
-    }
-  };
-
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -200,6 +152,23 @@ const ProductDetails = () => {
   const handleRecommendationClick = (recProductCategory, recProductId) => {
     navigate(`/products/${recProductCategory}/${recProductId}`);
   };
+
+  const handleBuyClick = (product) => {
+    navigate("/checkout", {
+      state: {
+        productDetails: {
+          id: product.productId,
+          name: product.Name,
+          price: product.Price,
+          image: product["title-image"],
+          description: product.Description,
+          developer: product.Developer,
+          platform: product.Platform,
+        },
+      },
+    });
+  };
+  
 
   return (
     <div className="product-page">
@@ -233,11 +202,11 @@ const ProductDetails = () => {
                 </p>
               </div>
             )}
-            <div className="buy-button-container">
-              <button className="buy-button" onClick={handleBuyButtonClick}>
-                Buy ${product.Price}
-              </button>
-            </div>
+                      <div className="buy-button-container">
+            <button className="buy-button" onClick={() => handleBuyClick(product)}>
+              Buy ${product.Price}
+            </button>
+          </div>
           </div>
         </div>
       </header>

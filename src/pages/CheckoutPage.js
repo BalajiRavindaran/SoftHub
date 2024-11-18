@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import './Checkout.css';
 
-import './Cart.css';
-
-const staticItems = [
-  { id: 1, name: "Product 1", price: 2000 },
-  { id: 2, name: "Product 2", price: 1800 },
-  { id: 3, name: "Product 3", price: 3000 },
-];
-
-function CartPage() {
+function CheckoutPage() {
   const [paymentResult, setPaymentResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState(null);
@@ -20,7 +13,6 @@ function CartPage() {
   const API_URL = 'https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment';
 
   useEffect(() => {
-    // Check if the URL contains the client_secret to confirm the payment after redirection
     const urlParams = new URLSearchParams(window.location.search);
     const paymentIntentClientSecret = urlParams.get('client_secret');
 
@@ -38,7 +30,7 @@ function CartPage() {
     const requestData = {
       amount: calculateTotal(),
       currency: 'cad',
-      description: 'Payment for cart items',
+      description: 'Payment for checkout items',
       receipt_email: 'bladycore@gmail.com',
     };
 
@@ -61,7 +53,6 @@ function CartPage() {
         throw new Error('Client Secret is missing from backend response');
       }
 
-      // Step 1: Confirm the payment using the client secret
       const { error, paymentIntent } = await stripe.confirmCardPayment(client_secret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -101,40 +92,33 @@ function CartPage() {
   };
 
   const calculateTotal = () => {
-    return staticItems.reduce((total, item) => total + item.price, 0);
+    // Replace this with your logic for calculating the checkout total
+    return 5000; // Placeholder value
   };
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Shopping Cart</h1>
-      <ul>
-        {staticItems.map((item) => (
-          <li key={item.id}>
-            {item.name} - ${item.price / 100}
-          </li>
-        ))}
-      </ul>
-
+      <h1>Checkout</h1>
       <div>
         <h3>Total: ${calculateTotal() / 100}</h3>
         <CardElement />
         <button onClick={handlePayment} disabled={loading || !stripe || !elements}>
-          {loading ? 'Processing...' : 'Buy Now'}
+          {loading ? 'Processing...' : 'Pay Now'}
         </button>
       </div>
 
-          {paymentResult && (
-      <div style={{ marginTop: '20px' }}>
-        <h2>Payment Result:</h2>
-        {paymentResult.error ? (
-          <pre style={{ color: 'red' }}>{paymentResult.error}</pre>
-        ) : (
-          <pre style={{ color: 'green' }}>{paymentResult.success}</pre> // Updated line
-        )}
-      </div>
-    )}
+      {paymentResult && (
+        <div style={{ marginTop: '20px' }}>
+          <h2>Payment Result:</h2>
+          {paymentResult.error ? (
+            <pre style={{ color: 'red' }}>{paymentResult.error}</pre>
+          ) : (
+            <pre style={{ color: 'green' }}>{paymentResult.success}</pre>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-export default CartPage;
+export default CheckoutPage;
