@@ -1,15 +1,4 @@
-/* Global styles */
-* {
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px 0;
-  }
+
   
   /* Checkout container styling */
   .checkout-container {

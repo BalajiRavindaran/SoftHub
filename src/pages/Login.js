@@ -25,11 +25,9 @@ const Login = () => {
         });
 
         user.authenticateUser(authDetails, {
-            onSuccess: async (result) => {
+            onSuccess: (result) => {
                 console.log('Login successful:', result);
-                const session = result.getAccessToken().getJwtToken();
-                const userRole = result.getIdToken().payload['custom:role'] || 'Consumer'; // Ensure safe access
-                login(user);
+                login(user); // AuthContext handles fetching attributes and tokens
                 navigate('/');
             },
             onFailure: (err) => {

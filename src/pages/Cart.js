@@ -1,138 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-
+import React, { useState, useEffect, useContext } from 'react';
 import './Cart.css';
-
-const staticItems = [
-  { id: 1, name: "Product 1", price: 2000 },
-  { id: 2, name: "Product 2", price: 1800 },
-  { id: 3, name: "Product 3", price: 3000 },
-];
+import AuthContext from '../components/AuthContext';
 
 function CartPage() {
-  const [paymentResult, setPaymentResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [clientSecret, setClientSecret] = useState(null);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const stripe = useStripe();
-  const elements = useElements();
-
-  const API_URL = 'https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment';
+  const { isAuthenticated, userDetails } = useContext(AuthContext);
+  const userSub = userDetails?.sub;
 
   useEffect(() => {
-    // Check if the URL contains the client_secret to confirm the payment after redirection
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentIntentClientSecret = urlParams.get('client_secret');
-
-    if (paymentIntentClientSecret) {
-      confirmPayment(paymentIntentClientSecret);
+    // If the user is authenticated, fetch their cart items from the API
+    if (isAuthenticated && userSub) {
+      fetchCartItems(userSub);
+    } else {
+      setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated, userSub]);
 
-  const handlePayment = async () => {
-    if (!stripe || !elements) return;
-
-    setLoading(true);
-    setPaymentResult(null);
-
-    const requestData = {
-      amount: calculateTotal(),
-      currency: 'cad',
-      description: 'Payment for cart items',
-      receipt_email: 'bladycore@gmail.com',
-    };
-
+  const fetchCartItems = async (userSub) => {
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          body: JSON.stringify(requestData),
-        }),
-      });
-
+      const response = await fetch(`https://p3aqkfift3.execute-api.ca-central-1.amazonaws.com/Cart/Cart?userName=${userSub}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart items');
+      }
       const data = await response.json();
-      console.log('Backend response:', data);
-
-      const parsedData = JSON.parse(data.body);
-      const { client_secret } = parsedData;
-
-      if (!client_secret) {
-        throw new Error('Client Secret is missing from backend response');
-      }
-
-      // Step 1: Confirm the payment using the client secret
-      const { error, paymentIntent } = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      });
-
-      if (error) {
-        setPaymentResult({ error: error.message });
-      } else if (paymentIntent.status === 'succeeded') {
-        setPaymentResult({ success: 'Payment succeeded!' });
-      }
-    } catch (error) {
-      console.error('Error during payment:', error);
-      setPaymentResult({ error: 'Payment failed' });
+      setItems(data.cartItems || []);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const confirmPayment = async (clientSecret) => {
-    try {
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      });
-
-      if (error) {
-        setPaymentResult({ error: error.message });
-      } else if (paymentIntent.status === 'succeeded') {
-        setPaymentResult({ success: 'Payment succeeded!' });
-      }
-    } catch (error) {
-      console.error('Error during payment confirmation:', error);
-      setPaymentResult({ error: 'Payment confirmation failed' });
-    }
-  };
-
   const calculateTotal = () => {
-    return staticItems.reduce((total, item) => total + item.price, 0);
+    return items.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2);
+  };  
+
+  const handleRemove = (id) => {
+    setItems(items.filter((item) => item.id !== id));
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Shopping Cart</h1>
-      <ul>
-        {staticItems.map((item) => (
-          <li key={item.id}>
-            {item.name} - ${item.price / 100}
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        <h3>Total: ${calculateTotal() / 100}</h3>
-        <CardElement />
-        <button onClick={handlePayment} disabled={loading || !stripe || !elements}>
-          {loading ? 'Processing...' : 'Buy Now'}
-        </button>
-      </div>
-
-          {paymentResult && (
-      <div style={{ marginTop: '20px' }}>
-        <h2>Payment Result:</h2>
-        {paymentResult.error ? (
-          <pre style={{ color: 'red' }}>{paymentResult.error}</pre>
-        ) : (
-          <pre style={{ color: 'green' }}>{paymentResult.success}</pre> // Updated line
-        )}
-      </div>
-    )}
+    <div className="cart-container">
+      <h1>Your Shopping Cart</h1>
+      {items.length === 0 ? (
+        <p className="empty-cart">Your cart is empty.</p>
+      ) : (
+        <>
+          <div className="cart-items">
+            {items.map((item) => (
+              <div className="cart-item" key={item.productId}>
+                <img src={item['title-image']} alt={item.name} className="cart-item-image" />
+                <div className="cart-item-details">
+                  <h3 className="cart-item-name">{item.name}</h3>
+                </div>
+                <div className="cart-item-actions">
+                  <span className="cart-item-price">${(item.price)}</span>
+                  <button className="remove-button" onClick={() => handleRemove(item.productId)}>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="total-container">
+            <span className="total-text">Total:</span>
+            <span className="total-amount">${calculateTotal()}</span>
+          </div>
+          <button className="payment-button">Buy Now</button>
+        </>
+      )}
     </div>
   );
 }

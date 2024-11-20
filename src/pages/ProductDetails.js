@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -6,6 +6,9 @@ import "./ProductDetails.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+import AuthContext from '../components/AuthContext';
+
 
 const settings = {
   dots: true,
@@ -31,6 +34,12 @@ const ProductDetails = () => {
   const [reviewSummary, setReviewSummary] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [cartSuccess, setCartSuccess] = useState(false);
+
+  const { isAuthenticated, userDetails } = useContext(AuthContext);
+  const userSub = userDetails?.sub;
 
   // Fetch product details
   useEffect(() => {
@@ -168,6 +177,44 @@ const ProductDetails = () => {
       },
     });
   };
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      alert("You must be logged in to add items to your cart.");
+      return;
+    }
+
+    setIsAddingToCart(true);
+  
+    const cartData = {
+      userName: userSub, // from AuthContext
+      productId, // from useParams
+    };
+
+    console.log("Sending to cart API:", cartData);
+  
+    try {
+      const response = await axios.post(
+        "https://p3aqkfift3.execute-api.ca-central-1.amazonaws.com/Cart/Cart", // Replace with your actual API Gateway URL
+        cartData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setCartSuccess(true);
+      setTimeout(() => setCartSuccess(false), 2000);
+
+      console.log(response.data.message); // Display success message
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item to the cart. Please try again.");
+    } finally {
+      setIsAddingToCart(false); 
+    }
+  };
   
 
   return (
@@ -180,33 +227,44 @@ const ProductDetails = () => {
             alt={product.Name}
             className="game-image"
           />
-          <div className="game-info">
-            <h1 className="game-title">{product.Name}</h1>
-            <p className="developer-info">
-              {product.Developer} - {categorySlug}
-            </p>
-            <div className="tags">
-              <span className="tag">
-                Supported Platforms: {product.Platform}
-              </span>
+        </div>
+        <div className="game-info">
+          <h1 className="game-title">{product.Name}</h1>
+          <p className="developer-info">
+            {product.Developer} - {categorySlug}
+          </p>
+          <div className="tags">
+            <span className="tag">Supported Platforms: {product.Platform}</span>
+          </div>
+          {sentiment && (
+            <div className="rainbow">
+              <p>What Everyone Thinks: </p>
+              <p>
+                {Array.from({ length: parseInt(sentiment.label[0]) }).map(
+                  (_, i) => (
+                    <span key={i}>⭐</span>
+                  )
+                )}
+              </p>
             </div>
-            {sentiment && (
-              <div className="rainbow">
-                <p>What Everyone Thinks: </p>
-                <p>
-                  {Array.from({ length: parseInt(sentiment.label[0]) }).map(
-                    (_, i) => (
-                      <span key={i}>⭐</span>
-                    )
-                  )}
-                </p>
-              </div>
-            )}
-                      <div className="buy-button-container">
-            <button className="buy-button" onClick={() => handleBuyClick(product)}>
+          )}
+
+          <div className="buy-button-container">
+            <button
+              className={`buy-button ${!isAuthenticated ? 'disabled' : ''}`}
+              onClick={() => handleBuyClick(product)}
+              disabled={!isAuthenticated}
+            >
               Buy ${product.Price}
             </button>
-          </div>
+
+            <button
+              className={`cart-button ${!isAuthenticated ? 'disabled' : ''} ${cartSuccess ? "success" : ""}`}
+              onClick={handleAddToCart}
+              disabled={!isAuthenticated}
+            >
+              {cartSuccess ? "Added!" : isAddingToCart ? "Adding..." : "Add to Cart"}
+            </button>
           </div>
         </div>
       </header>
@@ -315,7 +373,11 @@ const ProductDetails = () => {
             className="recommended-product"
             onClick={() => handleRecommendationClick("video-editors", 3)}
           >
-            <img src="/images/VEditors.png" alt="Recommended product" className="recommended-image"/>
+            <img
+              src="/images/VEditors.png"
+              alt="Recommended product"
+              className="recommended-image"
+            />
             <h4>Adobe Premiere Pro</h4>
             <p>$239.99</p>
           </div>

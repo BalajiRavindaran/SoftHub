@@ -11,8 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = (user) => {
         setIsAuthenticated(true);
-        getUserDetails(user);
-        getUserRole(user);
+        fetchUserAttributes(user);
         getUserToken(user);
     };
 
@@ -25,32 +24,22 @@ export const AuthProvider = ({ children }) => {
         setUserDetails(null);
         setUserRole(null);
         setUserToken(null);
-        // Clear tokens or perform any other logout actions
         localStorage.removeItem('token');
     };
 
-    const getUserDetails = (user) => {
+    const fetchUserAttributes = (user) => {
         if (user) {
             user.getUserAttributes((err, result) => {
                 if (err) {
                     console.error('Error fetching user attributes:', err);
                     return;
                 }
-                const attributes = result.map(attr => ({ [attr.Name]: attr.Value }));
-                setUserDetails(Object.assign({}, ...attributes));
-            });
-        }
-    };
-
-    const getUserRole = (user) => {
-        if (user) {
-            user.getUserAttributes((err, result) => {
-                if (err) {
-                    console.error('Error fetching user role:', err);
-                    return;
-                }
-                const roleAttribute = result.find(attr => attr.Name === 'custom:role');
-                setUserRole(roleAttribute ? roleAttribute.Value : null);
+                const attributes = result.reduce((acc, attr) => {
+                    acc[attr.Name] = attr.Value;
+                    return acc;
+                }, {});
+                setUserDetails(attributes);
+                setUserRole(attributes['custom:role'] || 'Consumer');
             });
         }
     };
@@ -68,13 +57,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
+        console.log('AuthContext:', { isAuthenticated, userDetails, userRole, userToken }),
         <AuthContext.Provider value={{ 
             isAuthenticated, 
             login, 
             logout, 
             userDetails, 
             userRole, 
-            userToken 
+            userToken,  
         }}>
             {children}
         </AuthContext.Provider>
