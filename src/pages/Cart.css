@@ -13,7 +13,7 @@ body {
   padding: 20px;
   background-color: #000000;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.1);
+  box-shadow: 0 0px 50px rgba(255, 0, 0, 1);
 }
 
 .cart-container h1 {
@@ -134,4 +134,10 @@ body {
 
 .payment-button:hover {
   background-color: #00a85a;
+}
+
+.cart-item-removing {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
