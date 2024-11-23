@@ -88,12 +88,13 @@ const ProductDetails = () => {
     const fetchSentiment = async () => {
       try {
         const response = await axios.get(
-          `https://jh3oxqtqn4.execute-api.ca-central-1.amazonaws.com/productId/analyzeReview`,
+          `https://1uwq38cfmi.execute-api.ca-central-1.amazonaws.com/llamaReviewSummary/getSummary`,
           {
-            params: { productId },
+            params: { productId, "type":"2" },
           }
         );
-        setSentiment(response.data[0]);
+        const data = response.data;
+        setSentiment(data.summary);
       } catch (error) {
         console.error("Error fetching sentiment analysis:", error);
       }
@@ -110,7 +111,7 @@ const ProductDetails = () => {
         const response = await axios.get(
           `https://1uwq38cfmi.execute-api.ca-central-1.amazonaws.com/llamaReviewSummary/getSummary`,
           {
-            params: { productId },
+            params: { productId, "type":"1" },
           }
         );
         const data = response.data;
@@ -239,13 +240,7 @@ const ProductDetails = () => {
           {sentiment && (
             <div className="rainbow">
               <p>What Everyone Thinks: </p>
-              <p>
-                {Array.from({ length: parseInt(sentiment.label[0]) }).map(
-                  (_, i) => (
-                    <span key={i}>⭐</span>
-                  )
-                )}
-              </p>
+              <p>{sentiment}</p>
             </div>
           )}
 

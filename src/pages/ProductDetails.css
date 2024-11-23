@@ -269,7 +269,7 @@ body {
 
 .review-item .rating-stars {
   font-size: 1.2rem;
-  color: #ffbc00; /* Star color */
+  color: #ff8500; /* Star color */
 }
 
 /* Additional Styling */
@@ -308,6 +308,7 @@ body {
 	font-weight: bold;
   color: #000;
   margin: 20px 0;
+  font-size: 17.5px;
 	
 	&::before {
 		content: '';
