@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import "./Cart.css";
 import AuthContext from "../components/AuthContext";
+import { Alert, Snackbar } from "@mui/material";
 
 function CartPage() {
   const [items, setItems] = useState([]);
@@ -9,6 +10,33 @@ function CartPage() {
   const [error, setError] = useState(null);
   const [paymentResult, setPaymentResult] = useState(null);
   const [processingPayment, setProcessingPayment] = useState(false);
+
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const cardStyle = {
+    style: {
+      base: {
+        color: "#ffffff", // White text
+        "::placeholder": {
+          color: "#bbbbbb", // Light gray placeholder
+        },
+        fontFamily: "Arial, sans-serif",
+        fontSize: "16px",
+        iconColor: "#ffffff", // White icons
+        "::selection": {
+          backgroundColor: "#5a67d8", // Highlight color
+        },
+      },
+      invalid: {
+        color: "#ff5252", // Red text for invalid input
+        iconColor: "#ff5252",
+      },
+    },
+  };
 
   const { isAuthenticated, userDetails } = useContext(AuthContext);
   const userSub = userDetails?.sub;
@@ -47,6 +75,10 @@ function CartPage() {
     }
   };
 
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
+
   const calculateTotal = () => {
     return items
       .reduce((total, item) => total + parseFloat(item.price), 0)
@@ -58,24 +90,37 @@ function CartPage() {
 
     try {
       const response = await fetch(
-        `https://p3aqkfift3.execute-api.ca-central-1.amazonaws.com/Cart/Cart?userName=${userSub}&productId=${productId}`,
+        `https://p3aqkfift3.execute-api.ca-central-1.amazonaws.com/Cart/Cart?userName=${userSub}&productIds=${productId}`, // Send single productId as list
         { method: "DELETE" }
       );
 
       if (!response.ok) {
+        setAlert({
+          open: true,
+          message: "Failed to remove item from cart",
+          severity: "error",
+        });
         throw new Error("Failed to remove item from cart");
       }
 
-      // Remove item from state after animation
       setTimeout(() => {
         setItems((prevItems) =>
           prevItems.filter((item) => item.productId !== productId)
         );
         setRemovingItemId(null); // Reset state
+        setAlert({
+          open: true,
+          message: "Item removed from cart",
+          severity: "success",
+        });
       }, 500);
     } catch (err) {
       console.error(err.message);
-      alert("Error removing item.");
+      setAlert({
+        open: true,
+        message: "Failed to remove item from cart",
+        severity: "error",
+      });
       setRemovingItemId(null); // Reset state on error
     }
   };
@@ -104,6 +149,11 @@ function CartPage() {
       const { client_secret } = parsedData;
 
       if (!client_secret) {
+        setAlert({
+          open: true,
+          message: "Client Secret is missing from backend response",
+          severity: "error",
+        });
         throw new Error("Client Secret is missing from backend response");
       }
 
@@ -117,12 +167,36 @@ function CartPage() {
       );
 
       if (error) {
+        setAlert({ open: true, message: error.message, severity: "error" });
         setPaymentResult({ error: error.message });
       } else if (paymentIntent.status === "succeeded") {
+        const productIds = items.map((item) => item.productId).join(","); // Convert to comma-separated list
+        const response = await fetch(
+          `https://p3aqkfift3.execute-api.ca-central-1.amazonaws.com/Cart/Cart?userName=${userSub}&productIds=${productIds}`,
+          { method: "DELETE" }
+        );
+
+        if (!response.ok) {
+          setAlert({
+            open: true,
+            message: "Failed to clear cart after payment",
+            severity: "error",
+          });
+          throw new Error("Failed to clear cart after payment");
+        }
+
+        setAlert({
+          open: true,
+          message: "Payment succeeded!",
+          severity: "success",
+        });
+
+        setItems([]); // Clear cart state on frontend
         setPaymentResult({ success: "Payment succeeded!" });
       }
     } catch (error) {
       console.error("Error during payment:", error);
+      setAlert({ open: true, message: "Payment failed", severity: "error" });
       setPaymentResult({ error: "Payment failed" });
     } finally {
       setProcessingPayment(false);
@@ -139,6 +213,21 @@ function CartPage() {
 
   return (
     <div className="cart-container">
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} // Add this line
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          variant="filled"
+          severity={alert.severity}
+          sx={{ width: "100%" }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
       <h1>Your Shopping Cart</h1>
       {items.length === 0 ? (
         <p className="empty-cart">Your cart is empty.</p>
@@ -177,7 +266,7 @@ function CartPage() {
             <span className="total-amount">${calculateTotal()}</span>
           </div>
           <div className="payment-section">
-            <CardElement />
+            <CardElement options={cardStyle}/>
             <button
               className="payment-button"
               onClick={handlePayment}
