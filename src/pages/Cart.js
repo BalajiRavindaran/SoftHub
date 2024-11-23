@@ -135,6 +135,10 @@ function CartPage() {
       currency: "cad",
       description: "Payment for cart items",
       receipt_email: userDetails?.email || "customer@example.com",
+      metadata: {
+        userSub: userSub,
+        productIds: items.map((item) => item.productId).join(","),  // Convert to a comma-separated string
+      },
     };
 
     try {
