@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useLocation } from "react-router-dom";
 import './Checkout.css';
+import AuthContext from '../components/AuthContext';
 
 const CheckoutPage = () => {
   const location = useLocation();

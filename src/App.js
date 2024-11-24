@@ -27,7 +27,11 @@ import { loadStripe } from '@stripe/stripe-js';
 
 import Checkout from './pages/Checkout';
 
+import OrdersPage from './pages/OrdersPage';
+
 const stripePromise = loadStripe('pk_test_51QK8A7IKDma6OOXz5P6x8Y82Ph13QXoIeJnPfNkZCy3eNB6qMUhfArnpFwG3CsDEWtw9wQbKHzF4nhwNFjaHUWuD00L6dLJNuO');
+
+
 
 
 function App() {
@@ -54,6 +58,7 @@ function App() {
           <Route path="/confirm-email" element={<ConfirmEmail />} />
           <Route path="/stripe" element={<Stripe />} />
           <Route path="/checkout" element={<Elements stripe={stripePromise}><Checkout /></Elements>} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Routes>
       </Router>
     </AuthProvider>
