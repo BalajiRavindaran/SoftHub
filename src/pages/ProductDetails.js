@@ -167,7 +167,7 @@ const ProductDetails = () => {
     navigate("/checkout", {
       state: {
         productDetails: {
-          id: product.productId,
+          id: productId,
           name: product.Name,
           price: product.Price,
           image: product["title-image"],

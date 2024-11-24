@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useLocation } from "react-router-dom";
 import './Checkout.css';
@@ -11,6 +11,9 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(''); // Track payment status
+
+  const { isAuthenticated, userDetails } = useContext(AuthContext);
+  const userSub = userDetails?.sub;
 
   const stripe = useStripe();
   const elements = useElements();
@@ -27,8 +30,12 @@ const CheckoutPage = () => {
     const requestData = {
       amount: productDetails.price * 100,
       currency: 'cad',
-      description: productDetails.name,
-      receipt_email: 'bladycore@gmail.com',
+      description: productDetails.name + " - " + productDetails.id + " - " + productDetails.description,
+      receipt_email: userDetails?.email || "customer@example.com",
+      metadata: {
+        userSub: userSub,
+        productIds: productDetails.id,
+      },
     };
 
     try {
@@ -72,6 +79,7 @@ const CheckoutPage = () => {
       } else if (paymentIntent.status === 'succeeded') {
         setPaymentResult({ success: 'Payment succeeded!' });
         setPaymentStatus('success'); // Update payment status
+        console.log('Payment succeeded:', paymentIntent);
       }
     } catch (error) {
       console.error('Error during payment:', error);
