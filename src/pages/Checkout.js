@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import './Checkout.css';
 import AuthContext from '../components/AuthContext';
 
 const CheckoutPage = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // React Router's hook for navigation
   const { productDetails } = location.state || {};
   const [paymentResult, setPaymentResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(''); // Track payment status
+
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const { isAuthenticated, userDetails } = useContext(AuthContext);
   const userSub = userDetails?.sub;
@@ -18,7 +25,8 @@ const CheckoutPage = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const API_URL = 'https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment';
+  const PAYMENT_API_URL = 'https://32gw38lfe0.execute-api.ca-central-1.amazonaws.com/default/stripe-lambda/payment';
+  const ORDER_API_URL = 'https://3ue0gb6b99.execute-api.ca-central-1.amazonaws.com/default/create-orders';
 
   useEffect(() => {
     if (productDetails) {
@@ -30,7 +38,7 @@ const CheckoutPage = () => {
     const requestData = {
       amount: productDetails.price * 100,
       currency: 'cad',
-      description: productDetails.name + " - " + productDetails.id + " - " + productDetails.description,
+      description: `${productDetails.name} - ${productDetails.id} - ${productDetails.description}`,
       receipt_email: userDetails?.email || "customer@example.com",
       metadata: {
         userSub: userSub,
@@ -39,7 +47,7 @@ const CheckoutPage = () => {
     };
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PAYMENT_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ body: JSON.stringify(requestData) }),
@@ -75,16 +83,63 @@ const CheckoutPage = () => {
 
       if (error) {
         setPaymentResult({ error: error.message });
-        setPaymentStatus('failed'); // Update payment status
+        setPaymentStatus('failed');
       } else if (paymentIntent.status === 'succeeded') {
         setPaymentResult({ success: 'Payment succeeded!' });
-        setPaymentStatus('success'); // Update payment status
+        setPaymentStatus('success');
+
         console.log('Payment succeeded:', paymentIntent);
+
+        const postEmail = await fetch(
+          `https://3dov43u3m3.execute-api.ca-central-1.amazonaws.com/dev/email`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: userDetails?.email,
+            }),
+          }
+        );
+
+        console.log("email sent to: ", userDetails?.email);
+  
+        if (!postEmail.ok) {
+          setAlert({
+            open: true,
+            message: "Failed to send email after payment",
+            severity: "error",
+          });
+          throw new Error("Failed to send email after payment");
+        }
+
+        // Post to the order API
+        const orderData = {
+          userName: userSub,
+          productId: productDetails.id,
+        };
+
+        try {
+          const response = await fetch(ORDER_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to post order: ${response.statusText}`);
+          }
+
+          console.log('Order posted successfully');
+          navigate('/orders'); // Redirect to orders page
+        } catch (postError) {
+          console.error('Error posting order:', postError);
+          setPaymentResult({ error: 'Order creation failed after payment. Please contact support.' });
+        }
       }
     } catch (error) {
       console.error('Error during payment:', error);
       setPaymentResult({ error: 'Payment failed.' });
-      setPaymentStatus('failed'); // Update payment status
+      setPaymentStatus('failed');
     } finally {
       setLoading(false);
     }
@@ -94,7 +149,7 @@ const CheckoutPage = () => {
     <div className="checkout-container">
       <h1>Checkout</h1>
       <p>Product: {productDetails ? productDetails.name : 'Loading...'}</p>
-      <p>Price: ${productDetails ? (productDetails.price) : 'Loading...'}</p>
+      <p>Price: ${productDetails ? productDetails.price : 'Loading...'}</p>
       <img src={productDetails ? productDetails.image : ''} alt={productDetails ? productDetails.name : ''} />
 
       <div className="payment-section">
@@ -113,11 +168,11 @@ const CheckoutPage = () => {
       </div>
 
       {paymentResult && (
-        <div className="payment-result" style={{ marginTop: '0px' }}>
+        <div className="payment-result">
           {paymentResult.error ? (
-            <pre style={{ color: 'red' }}>{paymentResult.error} Please try again... </pre>
+            <pre style={{ color: 'red' }}>{paymentResult.error}</pre>
           ) : (
-            <pre style={{ color: 'green' }}>{paymentResult.success} Redirecting... </pre>
+            <pre style={{ color: 'green' }}>{paymentResult.success} Redirecting...</pre>
           )}
         </div>
       )}

@@ -3,8 +3,10 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import "./Cart.css";
 import AuthContext from "../components/AuthContext";
 import { Alert, Snackbar } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CartPage() {
+  const navigate = useNavigate(); // React Router's hook for navigation
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -189,14 +191,60 @@ function CartPage() {
           throw new Error("Failed to clear cart after payment");
         }
 
+        const postEmail = await fetch(
+          `https://3dov43u3m3.execute-api.ca-central-1.amazonaws.com/dev/email`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: userDetails?.email,
+            }),
+          }
+        );
+
+        console.log("email sent to: ", userDetails?.email);
+  
+        if (!postEmail.ok) {
+          setAlert({
+            open: true,
+            message: "Failed to send email after payment",
+            severity: "error",
+          });
+          throw new Error("Failed to send email after payment");
+        }
+
+        const postOrdersResponse = await fetch(
+          `https://3ue0gb6b99.execute-api.ca-central-1.amazonaws.com/default/create-orders`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userName: userSub,
+              productId: productIds, // Send as an array of product IDs
+            }),
+          }
+        );
+  
+        if (!postOrdersResponse.ok) {
+          setAlert({
+            open: true,
+            message: "Failed to save orders after payment",
+            severity: "error",
+          });
+          throw new Error("Failed to save orders after payment");
+        }
+
         setAlert({
           open: true,
           message: "Payment succeeded!",
           severity: "success",
         });
 
+
         setItems([]); // Clear cart state on frontend
-        setPaymentResult({ success: "Payment succeeded!" });
+        setPaymentResult({ success: "Payment succeeded! Redirecting..." });
+        setTimeout(() => { navigate("/orders"); }, 2000); // Redirect to orders page
+        
       }
     } catch (error) {
       console.error("Error during payment:", error);
