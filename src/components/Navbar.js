@@ -64,7 +64,7 @@ const Navbar = () => {
     <>
       <nav className={`navbar ${isOpen ? 'blurred' : ''}`}>
       <div className="logo-container">
-      <img src= {'Logo.PNG'} alt="SoftHub Logo" className="logo-image" />
+      <img src= {'https://softhubmetadata.s3.ca-central-1.amazonaws.com/Logo.PNG'} alt="SoftHub Logo" className="logo-image" />
       <h2 className="logo">SoftHub</h2>
       </div>
 

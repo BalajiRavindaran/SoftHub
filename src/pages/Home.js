@@ -9,25 +9,25 @@ const Home = () => {
     {
       title: 'Streaming Services',
       description: 'Software for movies, music, and games',
-      imgUrl: '/images/Entertainment.png',
+      imgUrl: 'https://softhubmetadata.s3.ca-central-1.amazonaws.com/Entertainment.png',
       slug: 'streaming-services', // Add a slug for cleaner URLs
     },
     {
       title: 'Games',
       description: 'Software for movies, music, and games',
-      imgUrl: '/images/Games.png',
+      imgUrl: 'https://softhubmetadata.s3.ca-central-1.amazonaws.com/Games.png',
       slug: 'games',
     },
     {
       title: 'Microsoft',
       description: 'All things Microsoft software',
-      imgUrl: '/images/Microsoft.png',
+      imgUrl: 'https://softhubmetadata.s3.ca-central-1.amazonaws.com/Microsoft.png',
       slug: 'microsoft',
     },
     {
       title: 'Video Editors',
       description: 'Top software for editing videos',
-      imgUrl: '/images/VEditors.png',
+      imgUrl: 'https://softhubmetadata.s3.ca-central-1.amazonaws.com/VEditors.png',
       slug: 'video-editors',
     },
   ];

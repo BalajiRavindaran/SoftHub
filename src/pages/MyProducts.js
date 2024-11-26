@@ -4,6 +4,7 @@ import './MyProduct.css';
 import Filter from '../components/Filter';
 import '../components/Filter.css';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useAuth } from '../components/AuthContext';
 
 
 const MyProducts = () => {
@@ -21,18 +22,27 @@ const MyProducts = () => {
     const [deleteProductId, setDeleteProductId] = useState(null);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [successPopupVisible, setSuccessPopupVisible] = useState(false);
+    const {userDetails} = useAuth();
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [userDetails]);
+
 
     const fetchProducts = async () => {
         setLoading(true);
         setError(null);
 
         try {
+            const provider_id = userDetails && userDetails['sub']
+            console.log("Provider ID:", provider_id);
+            if(!provider_id) {
+                console.error("Provider ID is not available.");
+                return;
+            }
+
             const response = await fetch(
-                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=3`
+                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/products?provider_id=${provider_id}`
             );
             const data = await response.json();
             setProducts(data.body.products);
@@ -43,7 +53,7 @@ const MyProducts = () => {
         }
     };
 
-    const filteredProducts = products.filter(product => {
+    const filteredProducts = products && products.filter(product => {
         let isInPriceRange = true;
         let meetsMinRating = true;
 
@@ -180,21 +190,25 @@ const MyProducts = () => {
                         navigate("/provider/add-software")
                     }>+</button>
                 </div>
-                {filteredProducts.map(product => (
-                    <div key={product['product-id']} className="product-card">
-                        <img src={product.imgUrl} alt={product.name} className="product-image" />
-                        <div className="product-details-info">
-                            <div className="product-actions">
-                                <button onClick={() => handleEdit(product['product-id'])}>Edit</button>
-                                <button onClick={() => handleDelete(product['product-id'])}>Delete</button>
+                {filteredProducts && filteredProducts.length > 0 ? (
+                    filteredProducts.map(product => (
+                        <div key={product['product-id']} className="product-card">
+                            <img src={product.imgUrl} alt={product.name} className="product-image" />
+                            <div className="product-details-info">
+                                <div className="product-actions">
+                                    <button onClick={() => handleEdit(product['product-id'])}>Edit</button>
+                                    <button onClick={() => handleDelete(product['product-id'])}>Delete</button>
+                                </div>
+                                <h2 className="product-name">{product.name}</h2>
+                                <p className="product-price">{product.price}</p>
+                                <p className="product-rating">⭐ {product.rating} ({product.reviews} reviews)</p>
+                                <p className="product-description">{product.description}</p>
                             </div>
-                            <h2 className="product-name">{product.name}</h2>
-                            <p className="product-price">{product.price}</p>
-                            <p className="product-rating">⭐ {product.rating} ({product.reviews} reviews)</p>
-                            <p className="product-description">{product.description}</p>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <div>No products found</div>
+                )}
             </div>
             {showDeleteConfirmation && (
                 <div className="confirmation-modal">
