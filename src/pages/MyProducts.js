@@ -18,6 +18,9 @@ const MyProducts = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredResults, setFilteredResults] = useState([]);
     const navigate = useNavigate();
+    const [deleteProductId, setDeleteProductId] = useState(null);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [successPopupVisible, setSuccessPopupVisible] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -64,8 +67,51 @@ const MyProducts = () => {
     };
 
     const handleDelete = (productId) => {
-        console.log(`Deleting product: ${productId}`);
-        // Implement delete functionality here
+        setDeleteProductId(productId);
+        setShowDeleteConfirmation(true);
+    };
+
+
+
+    const confirmDelete = async () => {
+        setShowDeleteConfirmation(false);
+        setLoading(true);
+
+        try {
+            const payload = {
+                queryStringParameters: {
+                    productId: deleteProductId
+                }
+            };
+
+            const response = await fetch('https://a7g6yfjs7k.execute-api.ca-central-1.amazonaws.com/dev/productId', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload),
+                redirect: "follow"
+            });
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${await response.text()}`);
+            }
+            if (response.ok) {
+                setSuccessPopupVisible(true);
+            }
+            const data = await response.json();
+            console.log("Product deleted successfully:", data);
+
+            // Refresh the products list after deletion
+            fetchProducts();
+
+        } catch (error) {
+            console.error('Error deleting product:', error.message || error);
+            alert('Failed to delete product. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+
     };
 
     const handleSearch = async () => {
@@ -102,7 +148,7 @@ const MyProducts = () => {
         // Close menu logic here
         // For example, you might want to update a state variable
         setShowForm(false);
-      };
+    };
 
     return (
         <div className="my-products-container">
@@ -130,7 +176,7 @@ const MyProducts = () => {
             {/* Product grid */}
             <div className="product-grid">
                 <div className="add-product-button" >
-                    <button onClick={() => 
+                    <button onClick={() =>
                         navigate("/provider/add-software")
                     }>+</button>
                 </div>
@@ -150,6 +196,25 @@ const MyProducts = () => {
                     </div>
                 ))}
             </div>
+            {showDeleteConfirmation && (
+                <div className="confirmation-modal">
+                    <p>Are you sure you want to delete this product?</p>
+                    <button className="confirm-button" onClick={confirmDelete}>
+                        Yes
+                    </button>
+                    <button className="cancel-button" onClick={() => setShowDeleteConfirmation(false)}>
+                        No
+                    </button>
+                </div>
+            )}
+            {successPopupVisible && (
+                <div className="success-popup">
+                    <p>Product has been deleted successfully.</p>
+                    <button className="ok-button" onClick={() => setSuccessPopupVisible(false)}>
+                        OK
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
