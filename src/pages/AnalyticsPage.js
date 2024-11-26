@@ -269,6 +269,7 @@ const AnalyticsPage = () => {
                     display: 'inline-block',
                     textAlign: 'center',
                     width: 'auto',
+                    marginLeft: '15px'
                   }}
                 >
                   Revenue: {totalProductOrders * (product.price?.S || 0)}
