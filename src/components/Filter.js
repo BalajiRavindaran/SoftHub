@@ -54,6 +54,17 @@ function Filter({ minPrice, maxPrice, rating, setSelectedCategory, setMinPrice, 
             ))}
             </div>
         </div>
+        <select
+        value={selectedCategoryState}
+        onChange={handleCategoryChange}
+        className="category-select">
+        <option value="">Category</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
     </div>
     
   );

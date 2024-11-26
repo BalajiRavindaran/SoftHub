@@ -88,22 +88,11 @@
     border-radius: 5px;
   }
   .product-actions button:nth-child(1){
-    background-color: #3498db; /* Adjust color as needed */
-    color: #fff;
-  }
-
-  .product-actions button:nth-child(1):hover{
-    opacity: 0.8;
+    background: #a9a0e5;
   }
   .product-actions button:nth-child(2){
-    background-color: #e74c3c; /* Adjust color as needed */
-    color: #fff;
+    background: #D9534F;
   }
-
-  .product-actions button:nth-child(2):hover{
-    opacity: 0.8;
-  }
-
   .product-name {
     color: black; /* New rule for product name */
     font-weight: bold; /* Optional: adds emphasis */
