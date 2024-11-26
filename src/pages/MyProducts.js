@@ -43,7 +43,7 @@ const MyProducts = () => {
         }
     };
 
-    const filteredProducts = products.filter(product => {
+    const filteredProducts = products && products.filter(product => {
         let isInPriceRange = true;
         let meetsMinRating = true;
 
@@ -180,21 +180,25 @@ const MyProducts = () => {
                         navigate("/provider/add-software")
                     }>+</button>
                 </div>
-                {filteredProducts.map(product => (
-                    <div key={product['product-id']} className="product-card">
-                        <img src={product.imgUrl} alt={product.name} className="product-image" />
-                        <div className="product-details-info">
-                            <div className="product-actions">
-                                <button onClick={() => handleEdit(product['product-id'])}>Edit</button>
-                                <button onClick={() => handleDelete(product['product-id'])}>Delete</button>
+                {filteredProducts && filteredProducts.length > 0 ? (
+                    filteredProducts.map(product => (
+                        <div key={product['product-id']} className="product-card">
+                            <img src={product.imgUrl} alt={product.name} className="product-image" />
+                            <div className="product-details-info">
+                                <div className="product-actions">
+                                    <button onClick={() => handleEdit(product['product-id'])}>Edit</button>
+                                    <button onClick={() => handleDelete(product['product-id'])}>Delete</button>
+                                </div>
+                                <h2 className="product-name">{product.name}</h2>
+                                <p className="product-price">{product.price}</p>
+                                <p className="product-rating">⭐ {product.rating} ({product.reviews} reviews)</p>
+                                <p className="product-description">{product.description}</p>
                             </div>
-                            <h2 className="product-name">{product.name}</h2>
-                            <p className="product-price">{product.price}</p>
-                            <p className="product-rating">⭐ {product.rating} ({product.reviews} reviews)</p>
-                            <p className="product-description">{product.description}</p>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <div>No products found</div>
+                )}
             </div>
             {showDeleteConfirmation && (
                 <div className="confirmation-modal">
