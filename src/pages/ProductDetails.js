@@ -41,6 +41,33 @@ const ProductDetails = () => {
   const { isAuthenticated, userDetails } = useContext(AuthContext);
   const userSub = userDetails?.sub;
 
+  const [recommendations, setRecommendations] = useState([]); // Add this state for recommendations
+  const [loadingRecommendations, setLoadingRecommendations] = useState(true);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      setLoadingRecommendations(true);
+      try {
+        const response = await axios.get(
+          "https://uffrpakypa.execute-api.ca-central-1.amazonaws.com/default/get-software-listings",
+          {
+            params: { category: categorySlug },
+          }
+        );
+        // Filter out the current product by comparing the product IDs
+        const filteredRecommendations = response.data.filter(
+          (recProduct) => recProduct["product-id"] !== productId
+        );
+        setRecommendations(filteredRecommendations); // Set the filtered recommendations
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      } finally {
+        setLoadingRecommendations(false);
+      }
+    };
+    fetchRecommendations();
+  }, [categorySlug, productId]); // Include productId as a dependency  
+
   // Fetch product details
   useEffect(() => {
     setLoading(true);
@@ -363,28 +390,32 @@ const ProductDetails = () => {
       {/* Recommendations Section */}
       <section className="recommendations-section">
         <h3>You may also like:</h3>
-        <div className="recommended-products">
-          <div
-            className="recommended-product"
-            onClick={() => handleRecommendationClick("video-editors", 3)}
-          >
-            <img
-              src="/images/VEditors.png"
-              alt="Recommended product"
-              className="recommended-image"
-            />
-            <h4>Adobe Premiere Pro</h4>
-            <p>$239.99</p>
+        {loadingRecommendations ? (
+          <p>Loading recommendations...</p>
+        ) : (
+          <div className="recommended-products">
+            {recommendations.map((recProduct) => (
+              <div
+                key={recProduct["product-id"]}
+                className="recommended-product"
+                onClick={() =>
+                  handleRecommendationClick(recProduct.category, recProduct["product-id"])
+                }
+              >
+                <img
+                  src={recProduct.imgUrl}
+                  alt={recProduct.name}
+                  className="recommended-image"
+                />
+                <h4>{recProduct.name}</h4>
+                <p>${recProduct.price}</p>
+                {recProduct.averagerating && (
+                  <p>Rating: {recProduct.averagerating.toFixed(1)}★</p>
+                )}
+              </div>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Playable Platforms & Capabilities */}
-      <section className="playable-capabilities-section">
-        <h3>Playable On</h3>
-        <div className="playable-platforms">
-          <span className="platform">{product.Platform}</span>
-        </div>
+        )}
       </section>
     </div>
   );
