@@ -56,7 +56,7 @@ const Products = () => {
 
     // Apply rating filter only if rating is greater than 0
     if (rating > 0) {
-      meetsMinRating = product.average-rating >= rating;
+      meetsMinRating = product.averagerating >= rating;
     }
 
     // Apply search filter only if searchTerm is not empty
