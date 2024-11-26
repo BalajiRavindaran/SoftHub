@@ -56,7 +56,7 @@ const Products = () => {
 
     // Apply rating filter only if rating is greater than 0
     if (rating > 0) {
-      meetsMinRating = product.rating >= rating;
+      meetsMinRating = product.average-rating >= rating;
     }
 
     // Apply search filter only if searchTerm is not empty
@@ -156,8 +156,8 @@ const Products = () => {
                 <div key={product['product-id']} className="product-card" onClick={() => handleProductClick(product['product-id'])}>
                   <img src={product.imgUrl} alt={product.name} className="product-image" />
                   <h2 className="product-name">{product.name}</h2>
-                  <p className="product-price">{product.price}</p>
-                  <p className="product-rating">⭐ {product.rating} ({product.reviews} reviews)</p>
+                  <p className="product-price">${product.price}</p>
+                  <p className="product-rating">⭐ {product.averagerating} ({product.totalreviews} reviews)</p>
                   <p className="product-description">{product.description}</p>
                 </div>
               ))

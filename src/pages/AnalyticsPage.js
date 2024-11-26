@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import AuthContext from '../components/AuthContext';
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -13,24 +14,29 @@ const AnalyticsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { isAuthenticated, userDetails } = useContext(AuthContext);
+  const providerId = userDetails?.sub;
+
   // Make an API call to fetch the data
   useEffect(() => {
-    axios
-      .get('https://bcre43v783.execute-api.ca-central-1.amazonaws.com/default/GET-Provider-Dashboard?provider-id=1234567890')
-      .then(response => {
-        setData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+    if (providerId) {
+      axios
+        .get(`https://bcre43v783.execute-api.ca-central-1.amazonaws.com/default/GET-Provider-Dashboard?provider-id=${providerId}`)
+        .then(response => {
+          setData(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+  }, [providerId]); // The effect will run whenever providerId changes
 
   const fetchReviewSummary = async (productId) => {
     setIsLoading(true);
     setError("");
     try {
       const response = await axios.get(
-        `https://1uwq38cfmi.execute-api.ca-central-1.amazonaws.com/llamaReviewSummary/getSummary`,
+          'https://1uwq38cfmi.execute-api.ca-central-1.amazonaws.com/llamaReviewSummary/getSummary',
         {
           params: { productId, type: "3" },
         }
@@ -232,7 +238,7 @@ const AnalyticsPage = () => {
                     textAlign: 'center',
                   }}
                 >
-                  ${product.price?.N || '0.00'}
+                  ${product.price?.S || '0.00'}
                 </p>
                 {/* Styled Orders count */}
                 <p
@@ -250,6 +256,22 @@ const AnalyticsPage = () => {
                   }}
                 >
                   Orders: {totalProductOrders}
+                </p>
+                <p
+                  style={{
+                    fontSize: '1em',
+                    fontWeight: 'bold',
+                    color: '#fff',
+                    backgroundColor: '#3498db',
+                    padding: '8px 12px',
+                    borderRadius: '5px',
+                    marginBottom: '8px',
+                    display: 'inline-block',
+                    textAlign: 'center',
+                    width: 'auto',
+                  }}
+                >
+                  Revenue: {totalProductOrders * (product.price?.S || 0)}
                 </p>
                 <div
                   style={{
@@ -296,10 +318,9 @@ const AnalyticsPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2>{selectedProduct.name?.S}</h2>
-            <p>Price: ${selectedProduct.price?.N}</p>
-            <p>Orders: {selectedProduct.order_count}</p>
-            <p>Rating: {selectedProduct.average_rating}</p>
-            <p>Summary: {reviewSummary}</p>
+            <p style={{color: 'black'}}>Price: ${selectedProduct.price?.S}</p>
+            <p style={{color: 'black'}}>Total Orders: {selectedProduct.order_count}</p>
+            <p style={{color: 'black'}}>Summary: {reviewSummary}</p>
             <button onClick={() => setSelectedProduct(null)}>Close</button>
           </div>
         </div>
