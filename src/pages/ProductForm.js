@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProductForm.css';
+import { useAuth } from '../components/AuthContext';
 
 const ProductFormPage = () => {
   const { productId } = useParams(); // Extract productId from URL
@@ -25,12 +26,24 @@ const ProductFormPage = () => {
   const [stock, setStock] = useState('');
   const [discount, setDiscount] = useState('');
   const [offer, setOffer] = useState('');
-  const [providerId] = useState('1234567890'); // Static ProviderId for now
+  const [providerId, setProviderId] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false); // Loading state
+  const { userDetails } = useAuth();
+
 
   // Fetch product details if in edit mode
   useEffect(() => {
+
+    const provider_id = userDetails && userDetails['sub']
+    console.log("Provider ID:", provider_id);
+    if (!provider_id) {
+      console.error("Provider ID is not available.");
+      return;
+    }
+
+    setProviderId(provider_id);
+
     const fetchProductDetails = async () => {
       if (isEditMode && productId) {
         try {
@@ -443,7 +456,7 @@ const ProductFormPage = () => {
 
         <button type="submit">{isEditMode ? 'Update Software' : 'Add Software'}</button>
       </form>
-      
+
     </div>
   );
 };
