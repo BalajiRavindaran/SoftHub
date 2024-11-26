@@ -42,14 +42,14 @@ const Products = () => {
 
   // Filter products by categorySlug, search term, price, and rating
   const filteredProducts = products.filter(product => {
-    let isInCategory = true;
     let isInPriceRange = true;
     let meetsMinRating = true;
     let matchesSearch = true;
 
+    const priceValue = typeof product.price === 'number' ? product.price : parseFloat(product.price?.toString()?.replace('$', ''));
+
     // Apply price filter only if minPrice or maxPrice is set
     if ((minPrice !== '' || maxPrice !== '') && product.price) {
-      const priceValue = parseFloat(product.price.replace('$', ''));
       isInPriceRange = (minPrice === '' || parseFloat(minPrice.replace('$', '')) <= priceValue) &&
                        (maxPrice === '' || priceValue <= parseFloat(maxPrice.replace('$', '')));
     }
@@ -64,7 +64,7 @@ const Products = () => {
       matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     }
 
-    return isInCategory && isInPriceRange && meetsMinRating && matchesSearch;
+    return isInPriceRange && meetsMinRating && matchesSearch;
   });
 
   // Add these new functions
@@ -142,8 +142,7 @@ const Products = () => {
             <Filter 
               minPrice={minPrice} 
               maxPrice={maxPrice} 
-              rating={rating} 
-              setSelectedCategory={handleCategoryChange} 
+              rating={rating}
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
               setRating={handleRatingChange} 
