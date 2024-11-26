@@ -36,7 +36,7 @@ const CheckoutPage = () => {
 
   const fetchClientSecret = async () => {
     const requestData = {
-      amount: productDetails.price * 100,
+      amount: parseInt(productDetails.price * 100),
       currency: 'cad',
       description: `${productDetails.name} - ${productDetails.id} - ${productDetails.description}`,
       receipt_email: userDetails?.email || "customer@example.com",
