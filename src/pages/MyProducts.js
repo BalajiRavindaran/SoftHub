@@ -29,7 +29,7 @@ const MyProducts = () => {
 
         try {
             const response = await fetch(
-                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=1`
+                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=3`
             );
             const data = await response.json();
             setProducts(data.body.products);

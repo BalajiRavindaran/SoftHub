@@ -36,7 +36,6 @@ const Navbar = () => {
       case 'Provider':
         return (
           <>
-            <li><Link to="/" onClick={closeMenu}>Home</Link></li>
             <li><Link to="/myproducts" onClick={closeMenu}>My Products</Link></li>
             <li><Link to="/dashboard" onClick={closeMenu}>Analytics</Link></li>
           </>
