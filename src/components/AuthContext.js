@@ -40,6 +40,9 @@ export const AuthProvider = ({ children }) => {
                 }, {});
                 setUserDetails(attributes);
                 setUserRole(attributes['custom:role'] || 'Consumer');
+                if (attributes['sub']){
+                    attributes['sub'] = attributes['sub'];
+                }
             });
         }
     };

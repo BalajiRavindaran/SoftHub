@@ -4,6 +4,7 @@ import './MyProduct.css';
 import Filter from '../components/Filter';
 import '../components/Filter.css';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useAuth } from '../components/AuthContext';
 
 
 const MyProducts = () => {
@@ -21,18 +22,27 @@ const MyProducts = () => {
     const [deleteProductId, setDeleteProductId] = useState(null);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [successPopupVisible, setSuccessPopupVisible] = useState(false);
+    const {userDetails} = useAuth();
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [userDetails]);
+
 
     const fetchProducts = async () => {
         setLoading(true);
         setError(null);
 
         try {
+            const provider_id = userDetails && userDetails['sub']
+            console.log("Provider ID:", provider_id);
+            if(!provider_id) {
+                console.error("Provider ID is not available.");
+                return;
+            }
+
             const response = await fetch(
-                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/?provider_id=3`
+                `https://dseobqi29d.execute-api.ca-central-1.amazonaws.com/dev/products?provider_id=${provider_id}`
             );
             const data = await response.json();
             setProducts(data.body.products);
