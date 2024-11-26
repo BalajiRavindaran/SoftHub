@@ -1,18 +1,8 @@
 import React, { useState } from 'react';
 import './Filter.css';
 
-function Filter({ minPrice, maxPrice, rating, setSelectedCategory, setMinPrice, setMaxPrice, setRating }) {
-  // const [minPrice, setMinPrice] = useState('');
-  // const [maxPrice, setMaxPrice] = useState('');
-  // const [rating, setRating] = useState(0);
-  const [selectedCategoryState, setSelectedCategoryState] = useState('');
+function Filter({ minPrice, maxPrice, rating, setMinPrice, setMaxPrice, setRating }) {
 
-  const categories = ['Operating Systems', 'Apps', 'Entertainment'];
-
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-    setSelectedCategoryState(event.target.value);
-  };
 
   const handlePriceChange = (type, value) => {
     if (type === 'min') setMinPrice(value);
@@ -54,17 +44,6 @@ function Filter({ minPrice, maxPrice, rating, setSelectedCategory, setMinPrice, 
             ))}
             </div>
         </div>
-        <select
-        value={selectedCategoryState}
-        onChange={handleCategoryChange}
-        className="category-select">
-        <option value="">Category</option>
-        {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
     </div>
     
   );
