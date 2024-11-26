@@ -157,6 +157,7 @@ const ProductFormPage = () => {
         Features: features, // Array
         Size: size.toString(), // Ensure this is sent as a string
         Price: price.toString(), // Ensure this is sent as a string
+        
         ReleaseDate: releaseDate, // String
         'license-type': licenseType, // String
         version: version.toString(), // Ensure version is a string
