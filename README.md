@@ -4,7 +4,7 @@
 
 <a href="https://main.duvnntlhsen54.amplifyapp.com/">Link to Deployed Service</a>
 <p></p>
-<a href="https://main.duvnntlhsen54.amplifyapp.com/](https://balajiravindaran.atlassian.net/jira/software/projects/CSD/boards/9">Link to Jira Project</a>
+<a href="https://balajiravindaran.atlassian.net/jira/software/projects/CSD/boards/9">Link to Jira Project</a>
 
 ## Project Overview
 
