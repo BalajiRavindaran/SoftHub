@@ -2,6 +2,10 @@
 
 # Software Vendor Web Application
 
+<a href="https://main.duvnntlhsen54.amplifyapp.com/">Link to Deployed Service</a>
+<p></p>
+<a href="https://main.duvnntlhsen54.amplifyapp.com/](https://balajiravindaran.atlassian.net/jira/software/projects/CSD/boards/9">Link to Jira Project</a>
+
 ## Project Overview
 
 This is a **software-buying web application** built with React, hosted on AWS. The app allows consumers to browse, purchase, and download software. Providers can manage software listings, and admins can monitor website performance and analytics. The platform includes AI-powered product recommendations and sentiment analysis of reviews to enhance user experience.
